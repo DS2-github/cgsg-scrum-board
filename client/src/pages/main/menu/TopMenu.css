@@ -1,0 +1,21 @@
+.option_group {
+	display: inline-block;
+	overflow: hidden;
+}
+
+.option_item {
+    border: 0;
+    display: inline;
+    font-size: 1rem;
+    line-height: 1;
+    padding-bottom: 15px;
+    padding-top: 26px;
+}
+
+.active {
+    border-bottom: 5px solid transparent;
+    border-color: lightskyblue;
+}
+.passive {
+    background-color: white;
+}
