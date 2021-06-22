@@ -1,6 +1,9 @@
 .option_group {
+    font-family: 'Charlie Display';
 	display: inline-block;
 	overflow: hidden;
+    box-shadow: 0 4px 2px -2px gray;
+    width: 99vw;
 }
 
 .option_item {
@@ -10,6 +13,17 @@
     line-height: 1;
     padding-bottom: 15px;
     padding-top: 26px;
+    padding-right: 2%;
+    padding-left: 2%;
+}
+
+.img {
+    border: 0;
+    display: inline;
+    float:left;
+    line-height: 1;
+    padding: 0;
+    padding-right: 5px;
 }
 
 .active {
@@ -19,3 +33,4 @@
 .passive {
     background-color: white;
 }
+

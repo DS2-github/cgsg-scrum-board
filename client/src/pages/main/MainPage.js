@@ -1,19 +1,12 @@
-import React, { useContext } from 'react';
-import Board from './board/Board.js';
-import TopMenu from './menu/TopMenu.js';
-import { SocketContext } from './../../index';
+import React from 'react';
+import Board from './board/board';
+import TopMenu from './menu/TopMenu';
 
-function Main() {
-    const session = useContext(SocketContext);
-
+function Main(props) {
     return (
         <div>
-            <div>
-                <TopMenu />
-            </div>
-            <div className="Brd">
-                <Board />
-            </div>
+            <TopMenu />
+            <Board />
         </div>
     );
 }

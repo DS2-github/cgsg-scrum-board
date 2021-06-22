@@ -1,7 +1,7 @@
 import React from 'react';
 import './TopMenu.css';
 
-class TopMenu extends React.Component {
+export default class TopMenu extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -19,21 +19,23 @@ class TopMenu extends React.Component {
     render() {
         return (
             <div className="option_group">
-                <button className={`option_item ${this.state.active[0] ? "active" : "passive"}`}
-                    onClick={() => this.toggleChange(0)}>
-                    Tasks
+                <div className="img"><img src={require('./logo.png').default} /></div>
+                <div>
+
+                    <button className={`option_item ${this.state.active[0] ? "active" : "passive"}`}
+                        onClick={() => this.toggleChange(0)}>
+                        Tasks
                 </button>
-                <button className={`option_item ${this.state.active[1] ? "active" : "passive"}`}
-                    onClick={() => this.toggleChange(1)}>
-                    Projects
+                    <button className={`option_item ${this.state.active[1] ? "active" : "passive"}`}
+                        onClick={() => this.toggleChange(1)}>
+                        Projects
                 </button>
-                <button className={`option_item ${this.state.active[2] ? "active" : "passive"}`}
-                    onClick={() => this.toggleChange(2)}>
-                    Team
+                    <button className={`option_item ${this.state.active[2] ? "active" : "passive"}`}
+                        onClick={() => this.toggleChange(2)}>
+                        Team
                 </button>
+                </div>
             </div>
         );
     }
 }
-
-export default TopMenu;
