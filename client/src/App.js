@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom'
 
-import mainPage from './pages/main/mainPage'
+import mainPage from './pages/main/main-page'
 
 const routes = [
     { path: '/', Component: mainPage },

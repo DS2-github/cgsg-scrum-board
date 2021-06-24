@@ -2,6 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import { Droppable, Draggable } from 'react-beautiful-dnd';
 import Task from './task';
+import DropDownMenu from './dropdownmenu';
 
 const Container = styled.div`
   width: 300px;
@@ -9,25 +10,34 @@ const Container = styled.div`
   vertical-align: top;
   padding: 4px;
   margin: 1px;
-  background-color: rgb(196, 196, 196);
+  background-color: rgb(216, 216, 210);
   border-radius: 13.0px;
 
   display: flex;
   flex-direction: column;
 `;
+
 const Title = styled.h3`
+  width: auto;
   font-family: 'Charlie Display';
   vertical-align: top;
   padding: 4px;
   margin: 1px;
+  width: fit-content;
+  display: inline-block;
+  vertical-align: top;
 `;
+
 const TaskList = styled.div`
+  width: 290px;
   padding: 8px;
   transition: background-color 0.1s ease;
   background-color: ${props =>
         props.isDraggingOver ? 'lightgrey' : 'inherit'};
   flex-grow: 1;
   min-height: 100px;
+  display: inline;
+
 `;
 
 class InnerList extends React.Component {
@@ -38,7 +48,11 @@ class InnerList extends React.Component {
         return true;
     }
     render() {
-        return this.props.tasks.map((task, index) => (
+        let tasks = [];
+        for (let tsk of this.props.tasks.values()) {
+            tasks.push(tsk);
+        }
+        return tasks.map((task, index) => (
             <Task key={task.id} task={task} index={index} />
         ));
     }
@@ -50,9 +64,12 @@ export default class Column extends React.Component {
             <Draggable draggableId={this.props.column.id} index={this.props.index}>
                 {provided => (
                     <Container {...provided.draggableProps} innerRef={provided.innerRef}>
-                        <Title {...provided.dragHandleProps}>
-                            {this.props.column.title}
-                        </Title>
+                        <div>
+                            <Title {...provided.dragHandleProps}>
+                                {this.props.column.tittle}
+                            </Title>
+                            <DropDownMenu newTask={this.props.newTask} colId={this.props.column.id} />
+                        </div>
                         <Droppable droppableId={this.props.column.id} type="task">
                             {(provided, snapshot) => (
                                 <TaskList
