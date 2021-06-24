@@ -1,6 +1,8 @@
 import React from 'react';
 import styled from 'styled-components';
 import { Draggable } from 'react-beautiful-dnd';
+import { ContextMenu, MenuItem, ContextMenuTrigger } from "react-contextmenu";
+import ContextMenuAdd from '../menu/contextmenu.js'
 
 const Container = styled.div`
   width: 260px; 
@@ -21,42 +23,32 @@ const Author = styled.p`
   font-size: 14px;
 `;
 
-function DynamicTask(props) {
-    return (
-        <Container>
-            <input type="text" value={props.task.content} />
-            <Author>{props.task.author}</Author>
-        </Container>
-    );
-}
-
-function StaticTask(props) {
-    return (
-        <Draggable draggableId={props.task.id} index={props.index} >
-            {(provided, snapshot) => (
-                <Container
-                    {...provided.draggableProps}
-                    {...provided.dragHandleProps}
-                    innerRef={provided.innerRef}
-                    isDragging={snapshot.isDragging}
-                    aria-roledescription="Press space bar to lift the task"
-                >
-                    <Content>{props.task.content}</Content>
-                    <Author>{props.task.author}</Author>
-                </Container>
-            )}
-        </Draggable>
-    );
-}
-
 export default class Task extends React.Component {
     render() {
-        const localOutput =
-            /*this.props.task.localAccess ?
-                <DynamicTask task={this.props.task} /> :*/
-            <StaticTask task={this.props.task} index={this.props.index} />
         return (
-            <div>{localOutput}</div>
+            <Draggable draggableId={this.props.task.id} index={this.props.index} >
+
+                {(provided, snapshot) => (
+                    <div>
+                        <ContextMenuTrigger id={this.props.task.id}>
+                            <Container
+                                {...provided.draggableProps}
+                                {...provided.dragHandleProps}
+                                innerRef={provided.innerRef}
+                                isDragging={snapshot.isDragging}
+                                aria-roledescription="Press space bar to lift the task"
+                            >
+                                <Content>{this.props.task.content}</Content>
+                                <Author>{this.props.task.author}</Author>
+                            </Container>
+                        </ContextMenuTrigger>
+
+                        {/* V pole "properties" ya prosto peredayu vse dermo v contextmenu;
+                            Nuzhni functions clone, delete, edit */}
+                        <ContextMenuAdd properties={this.props} />
+                    </div>
+                )}
+            </Draggable>
         );
     }
 }
