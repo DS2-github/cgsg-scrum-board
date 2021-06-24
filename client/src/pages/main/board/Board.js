@@ -17,13 +17,14 @@ class InnerList extends React.PureComponent {
 }
 
 const Brd = styled.div`
-    width: 80vw;   
-    height: 100vh
-    float:right; 
-    padding-left: 3%;
-    box-shadow: -14px 0px 12px -11px rgba(34, 60, 80, 0.16);
-`;
-
+  position:absolute;
+  vertical-align: top;
+  display: inline-block;
+  padding: 0.5%;
+  height: 95vh;
+  overflow-x: scroll;
+  box-shadow: -14px 0px 12px -11px rgba(34, 60, 80, 0.16);
+`
 
 export default class Board extends React.Component {
     state = {
@@ -70,12 +71,12 @@ export default class Board extends React.Component {
         columnOrder: ['column-0', 'column-1', 'column-2', 'column-3'],
     };
 
-    newTask = (colId) => {
+    newTask = (colId, content) => {
         let newTasks = _.cloneDeep(this.state.tasks);
         let newNumOfTasks = newTasks.size;
         let newColumn = this.state.columns.get(colId);
 
-        newTasks.set(`task-${newNumOfTasks}`, { id: `task-${newNumOfTasks}`, content: "!!!!!!!!!!!!!!", author: "tester" });
+        newTasks.set(`task-${newNumOfTasks}`, { id: `task-${newNumOfTasks}`, content: content, author: "tester" });
         newColumn.taskIds.push(`task-${newNumOfTasks}`);
         const newState = _.cloneDeep(this.state);
         newState.tasks = newTasks;

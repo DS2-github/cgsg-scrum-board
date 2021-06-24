@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import { Draggable } from 'react-beautiful-dnd';
-import { ContextMenu, MenuItem, ContextMenuTrigger } from "react-contextmenu";
+import { ContextMenuTrigger } from 'react-contextmenu';
 import ContextMenuAdd from '../menu/contextmenu.js'
 
 const Container = styled.div`
@@ -45,7 +45,7 @@ export default class Task extends React.Component {
 
                         {/* V pole "properties" ya prosto peredayu vse dermo v contextmenu;
                             Nuzhni functions clone, delete, edit */}
-                        <ContextMenuAdd properties={this.props} />
+                        <ContextMenuAdd task={this.props.task} />
                     </div>
                 )}
             </Draggable>

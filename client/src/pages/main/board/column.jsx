@@ -6,10 +6,9 @@ import DropDownMenu from './../menu/dropdownmenu';
 
 const Container = styled.div`
   width: 300px;
-  display: inline-block;
   vertical-align: top;
   padding: 4px;
-  margin: 1px;
+  margin: 5px;
   background-color: rgb(216, 216, 210);
   border-radius: 13.0px;
   display: flex;
@@ -28,13 +27,15 @@ const Title = styled.h3`
 `;
 
 const TaskList = styled.div`
+  height: fit-context;
   width: 290px;
   padding: 8px;
   transition: background-color 0.1s ease;
   background-color: ${props =>
         props.isDraggingOver ? 'lightgrey' : 'inherit'};
   flex-grow: 1;
-  min-height: 100px;
+  height: 80vh;
+  overflow-y: scroll;
   display: inline;
 `;
 
