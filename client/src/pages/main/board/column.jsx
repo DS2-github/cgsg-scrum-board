@@ -2,7 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import { Droppable, Draggable } from 'react-beautiful-dnd';
 import Task from './task';
-import DropDownMenu from './dropdownmenu';
+import DropDownMenu from './../menu/dropdownmenu';
 
 const Container = styled.div`
   width: 300px;
@@ -12,7 +12,6 @@ const Container = styled.div`
   margin: 1px;
   background-color: rgb(216, 216, 210);
   border-radius: 13.0px;
-
   display: flex;
   flex-direction: column;
 `;
@@ -37,7 +36,6 @@ const TaskList = styled.div`
   flex-grow: 1;
   min-height: 100px;
   display: inline;
-
 `;
 
 class InnerList extends React.Component {

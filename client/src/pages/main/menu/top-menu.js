@@ -1,11 +1,11 @@
 import React from 'react';
-import './top-menu.css';
+import 'semantic-ui-css/semantic.min.css'
 
 export default class TopMenu extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            active: [true, false, false],
+            active: [true, false, false, false],
         };
         this.toggleChange = this.toggleChange.bind(this);
     }
@@ -18,22 +18,23 @@ export default class TopMenu extends React.Component {
     }
     render() {
         return (
-            <div className="top_menu_option_group">
-                <div className="top_menu_img"><img src={require('./logo.png').default} /></div>
-                <div>
+            <div>
+                <div class="ui secondary pointing menu">
 
-                    <button className={`top_menu_option_item top_menu_${this.state.active[0] ? "active" : "passive"}`}
-                        onClick={() => this.toggleChange(0)}>
-                        Tasks
-                </button>
-                    <button className={`top_menu_option_item top_menu_${this.state.active[1] ? "active" : "passive"}`}
-                        onClick={() => this.toggleChange(1)}>
-                        Projects
-                </button>
-                    <button className={`top_menu_option_item top_menu_${this.state.active[2] ? "active" : "passive"}`}
-                        onClick={() => this.toggleChange(2)}>
-                        Team
-                </button>
+                    <button class={`${this.state.active[0] ? "active " : " "}item blue`} onClick={() => this.toggleChange(0)}>
+                        Home
+                    </button>
+                    <button class={`${this.state.active[1] ? "active " : " "}item blue`} onClick={() => this.toggleChange(1)}>
+                        Messages
+                    </button>
+                    <button class={`${this.state.active[2] ? "active " : " "}item blue`} onClick={() => this.toggleChange(2)}>
+                        Friends
+                    </button>
+                    <div class="right menu">
+                        <button class={`ui ${this.state.active[3] ? "active " : " "}item blue`} onClick={() => this.toggleChange(3)}>
+                            Logout
+                        </button>
+                    </div>
                 </div>
             </div>
         );

@@ -1,7 +1,7 @@
 import React from 'react'
 import styled from 'styled-components'
 import 'semantic-ui-css/semantic.min.css'
-import { Dropdown, Menu, Icon } from 'semantic-ui-react'
+import { Dropdown } from 'semantic-ui-react'
 
 const Container = styled.button`
   border: 0;
