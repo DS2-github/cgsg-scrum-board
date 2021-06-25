@@ -16,14 +16,10 @@ const Container = styled.div`
 `;
 
 const Title = styled.h3`
-  width: auto;
   font-family: 'Charlie Display';
-  vertical-align: top;
   padding: 4px;
   margin: 1px;
-  width: fit-content;
   display: inline-block;
-  vertical-align: top;
 `;
 
 const TaskList = styled.div`
@@ -67,7 +63,9 @@ export default class Column extends React.Component {
                             <Title {...provided.dragHandleProps}>
                                 {this.props.column.tittle}
                             </Title>
-                            <DropDownMenu newTask={this.props.newTask} colId={this.props.column.id} />
+                            <DropDownMenu
+                                column={this.props.column}
+                                newTask={this.props.newTask} renameList={this.props.renameList} deleteList={this.props.deleteList} />
                         </div>
                         <Droppable droppableId={this.props.column.id} type="task">
                             {(provided, snapshot) => (

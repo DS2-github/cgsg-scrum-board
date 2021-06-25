@@ -57,7 +57,7 @@ function EditTask(props) {
         <Button color='green' inverted onClick={() => {
           props.task.author !== "tester" ?
             alert("Access denied!") :
-            props.editTask(props.task, value); dispatch({ type: 'close', value: value })
+            props.editTask(props.task.id, value); dispatch({ type: 'close', value: value })
         }}>
           <Icon name='checkmark' /> Confirm
         </Button>

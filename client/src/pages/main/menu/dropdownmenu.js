@@ -18,9 +18,9 @@ const Container = styled.button`
 function addReducer(state, action) {
     switch (action.type) {
         case 'close':
-            return { open: false, value: "" }
+            return { open: false, value: action.value }
         case 'open':
-            return { open: true, value: "" }
+            return { open: true, value: action.value }
         case 'update':
             return { value: action.value }
         default:
@@ -36,11 +36,44 @@ class Inpt extends React.Component {
         return (
             <Input
                 ref={(input) => { this.input = input; }}
-                fluid value={this.props.value}
+                fluid defaultValue={this.props.content}
                 onChange={(event) => this.props.dispatch({ type: 'update', value: event.target.value })}
             />
         );
     }
+}
+
+function RenameList(props) {
+    const [state, dispatch2] = useReducer(addReducer, {
+        open: false,
+        value: "",
+    })
+    const { open, value } = state;
+    return (
+        <Modal
+            basic
+            open={open}
+            onOpen={() => dispatch2({ type: 'open', value: props.column.tittle })}
+            onClose={() => dispatch2({ type: 'close' })}
+            size='large'
+            dimmer='blurring'
+            trigger={props.trigger}
+        >
+            <Modal.Content>
+                <Inpt dispatch={dispatch2} content={value} />
+            </Modal.Content>
+            <Modal.Actions>
+                <Button basic color='red' inverted onClick={() => dispatch2({ type: 'close', value: value })}>
+                    <Icon name='remove' /> Cancel
+          </Button>
+                <Button color='green' inverted onClick={() => {
+                    props.renameList(props.column.id, value); dispatch2({ type: 'close', value: value })
+                }}>
+                    <Icon name='checkmark' /> Confirm
+          </Button>
+            </Modal.Actions>
+        </Modal>
+    );
 }
 
 function AddTask(props) {
@@ -81,13 +114,17 @@ export default function DropDownMenu(props) {
                 <Dropdown.Menu>
                     <AddTask
                         newTask={props.newTask}
-                        colId={props.colId}
+                        colId={props.column.id}
                         trigger={<Dropdown.Item icon="plus" content="New task" />}
                     />
-                    <Dropdown.Item icon="copy" content="Copy list" />
-                    <Dropdown.Item icon="folder" content="Add list" />
-                    <Dropdown.Item icon="edit" content="Rename list" />
-                    <Dropdown.Item icon="trash" content="Delete list" />
+                    {/*<Dropdown.Item icon="delete" content="Clear list" />
+                    <Dropdown.Item icon="folder" content="Add list" />*/}
+                    <RenameList
+                        renameList={props.renameList}
+                        column={props.column}
+                        trigger={<Dropdown.Item icon="edit" content="Rename list" />}
+                    />
+                    <Dropdown.Item icon="trash" content="Delete list" onClick={() => props.deleteList(props.column.id)} />
                 </Dropdown.Menu>
             </Dropdown>
         </Container>

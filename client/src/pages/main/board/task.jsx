@@ -22,9 +22,9 @@ const Content = styled.p`
 `;
 
 const Status = styled.i`
-  font-color: grey;
   display:inline-block;
   font-size: 10px;
+  color:red;
 `
 
 const Author = styled.p`

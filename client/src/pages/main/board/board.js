@@ -10,9 +10,13 @@ const Container = styled.div`
 
 class InnerList extends React.PureComponent {
     render() {
-        const { column, taskMap, index, newTask, editTask, deleteTask } = this.props;
+        const { column, taskMap, index, newTask, editTask, deleteTask, renameList, deleteList } = this.props;
         const tasks = column.taskIds.map(taskId => taskMap.get(taskId));
-        return <Column column={column} tasks={tasks} index={index} newTask={newTask} editTask={editTask} deleteTask={deleteTask} />;
+        return (<Column
+            column={column} tasks={tasks} index={index}
+            newTask={newTask} editTask={editTask} deleteTask={deleteTask}
+            renameList={renameList} deleteList={deleteList}
+        />);
     }
 }
 
@@ -22,6 +26,7 @@ const Brd = styled.div`
   display: inline-block;
   padding: 0.5%;
   height: 95vh;
+  width: 1500px;
   overflow-x: scroll;
   box-shadow: -14px 0px 12px -11px rgba(34, 60, 80, 0.16);
 `
@@ -30,56 +35,72 @@ export default class Board extends React.Component {
     state = {
         tasks: new Map(Object.entries({
             'task-0': { id: 'task-0', content: "", author: "tester", status: "deleted", },
-            'task-1': { id: 'task-1', content: "gdhxfnxb", author: "Naklal Kalov", status: "", },
-            'task-2': { id: 'task-2', content: "zfvzfv", author: "Kirill Submitov", status: "", },
-            'task-3': { id: 'task-3', content: "tezvzdfvzdst3", author: "Daniil Smirnov", status: "", },
-            'task-4': { id: 'task-4', content: "tzdveszdvzdfvzdt0", author: "Andrew Chugunov", status: "", },
-            'task-5': { id: 'task-5', content: "zdvdtefvzfdvfzdst0", author: "Lana Sashovayz", status: "", },
-            'task-6': { id: 'task-6', content: "tesvzdfvzdvt1", author: "Aleksey Romanov", status: "", },
-            'task-7': { id: 'task-7', content: "ya kal-naklal", author: "tester", status: "", },
+            'task-1': { id: 'task-1', content: "Welcome to scrum board", author: "Scrum developers", status: "", },
+            'task-2': { id: 'task-2', content: "Scam board task", author: "Вася Пупкин", status: "edited", },
+            'task-3': { id: 'task-3', content: "Task card", author: "User102", status: "", },
+            'task-4': { id: 'task-4', content: "Prepare TMI video samples", author: "cgsg130", status: "", },
+            'task-5': { id: 'task-5', content: "Learn JavaScript", author: "User47", status: "", },
+            'task-6': { id: 'task-6', content: "Fix bugs in code", author: "Aleksey Romanov", status: "", },
+            'task-7': { id: 'task-7', content: "ya kal-naklal", author: "Anoimus", status: "", },
         })),
         columns: new Map(Object.entries({
             'column-0': {
                 id: 'column-0',
                 tittle: 'To do',
-                taskIds: ['task-5', 'task-2'],
-                publicAccess: 'everyone',
-                localAccess: true,
+                taskIds: ['task-5', 'task-2', 'task-3'],
+                status: "",
             },
             'column-1': {
                 id: 'column-1',
                 tittle: 'In progress',
-                taskIds: ['task-1', 'task-7'],
-                publicAccess: 'everyone',
-                localAccess: true,
+                taskIds: ['task-1', 'task-7', 'task-6'],
+                status: "",
             },
             'column-2': {
                 id: 'column-2',
                 tittle: 'Review',
-                taskIds: ['task-4', 'task-6'],
-                publicAccess: 'everyone',
-                localAccess: true,
+                taskIds: ['task-4'],
+                status: "",
             },
             'column-3': {
                 id: 'column-3',
                 tittle: 'Done',
-                taskIds: ['task-3'],
-                publicAccess: 'everyone',
-                localAccess: true,
+                taskIds: [],
+                status: "",
             },
         })),
         columnOrder: ['column-0', 'column-1', 'column-2', 'column-3'],
     };
 
-    editTask = (task, content) => {
-        let newTasks = _.cloneDeep(this.state.tasks);
+    renameList = (colId, content) => {
+        let newColumns = _.cloneDeep(this.state.columns);
+        let newColumn = newColumns.get(colId);
+        newColumn.tittle = _.clone(content);
+        newColumns.set(colId, newColumn);
 
-        newTasks.set(task.id, {
-            id: `${task.id}`,
-            content: content,
-            author: task.author,
-            status: 'edited',
+        this.setState({
+            columns: newColumns,
         });
+    }
+
+    deleteList = (colId) => {
+        let newColumns = _.cloneDeep(this.state.columns);
+        let newColumnOrder = _.cloneDeep(this.state.columnOrder);
+
+        newColumns.set(colId, { id: colId, tittle: "list was deleted", taskIds: [], status: "deleted" });
+        const newState = _.cloneDeep(this.state);
+        newState.columns = newColumns;
+        newColumnOrder.splice(newColumnOrder.indexOf(colId), 1);
+        newState.columnOrder = newColumnOrder;
+        this.setState(newState);
+    }
+
+    editTask = (taskId, content) => {
+        let newTasks = _.cloneDeep(this.state.tasks);
+        let newTask = newTasks.get(taskId);
+        newTask.content = _.clone(content);
+        newTask.status = 'edited';
+        newTasks.set(newTask);
         this.setState({
             tasks: newTasks,
         });
@@ -232,6 +253,8 @@ export default class Board extends React.Component {
                                             newTask={this.newTask}
                                             deleteTask={this.deleteTask}
                                             editTask={this.editTask}
+                                            renameList={this.renameList}
+                                            deleteList={this.deleteList}
                                         />
                                     );
                                 })}
