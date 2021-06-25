@@ -2,7 +2,7 @@ import React, { useContext } from 'react';
 import Board from './board/board';
 import TopMenu from './menu/top-menu';
 import styled from 'styled-components';
-import { SocketContext } from '../../index';
+import { Context } from '../../index';
 
 const Container = styled.div`
   display: inline-block;
@@ -20,17 +20,17 @@ const SideMenu = styled.div`
 `
 
 function Main(props) {
-    const session = useContext(SocketContext);
-    return (
-        <div>
-            <TopMenu />
-            <Container>
-                <SideMenu>
-                </SideMenu>
-                <Board />
-            </Container>
-        </div>
-    );
+  const session = useContext(Context);
+  return (
+    <div>
+      <TopMenu />
+      <Container>
+        <SideMenu>
+        </SideMenu>
+        <Board />
+      </Container>
+    </div>
+  );
 }
 
 export default Main;

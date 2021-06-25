@@ -4,7 +4,7 @@ import App from './App';
 import Session from './context/context';
 
 const session = new Session();
-export const SocketContext = React.createContext(session);
+export const Context = React.createContext(session);
 
 ReactDOM.render(
   <React.StrictMode>

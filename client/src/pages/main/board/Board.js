@@ -10,9 +10,9 @@ const Container = styled.div`
 
 class InnerList extends React.PureComponent {
     render() {
-        const { column, taskMap, index, newTask } = this.props;
+        const { column, taskMap, index, newTask, editTask, deleteTask } = this.props;
         const tasks = column.taskIds.map(taskId => taskMap.get(taskId));
-        return <Column column={column} tasks={tasks} index={index} newTask={newTask} />;
+        return <Column column={column} tasks={tasks} index={index} newTask={newTask} editTask={editTask} deleteTask={deleteTask} />;
     }
 }
 
@@ -29,20 +29,20 @@ const Brd = styled.div`
 export default class Board extends React.Component {
     state = {
         tasks: new Map(Object.entries({
-            'task-0': { id: 'task-0', content: "", author: "Vasya Pupkin", publicAccess: 'everyone', localAccess: false, },
-            'task-1': { id: 'task-1', content: "gdhxfnxb", author: "Naklal Kalov", publicAccess: 'everyone', localAccess: false, },
-            'task-2': { id: 'task-2', content: "zfvzfv", author: "Kirill Submitov", publicAccess: 'everyone', localAccess: false, },
-            'task-3': { id: 'task-3', content: "tezvzdfvzdst3", author: "Daniil Smirnov", publicAccess: 'everyone', localAccess: true, },
-            'task-4': { id: 'task-4', content: "tzdveszdvzdfvzdt0", author: "Andrew Chugunov", publicAccess: 'everyone', localAccess: false, },
-            'task-5': { id: 'task-5', content: "zdvdtefvzfdvfzdst0", author: "Lana Sashovayz", publicAccess: 'everyone', localAccess: false, },
-            'task-6': { id: 'task-6', content: "tesvzdfvzdvt1", author: "Aleksey Romanov", publicAccess: 'everyone', localAccess: false, },
-            'task-7': { id: 'task-7', content: "ya kal-naklal", author: "Kirik Commitov", publicAccess: 'everyone', localAccess: false, },
+            'task-0': { id: 'task-0', content: "", author: "tester", status: "deleted", },
+            'task-1': { id: 'task-1', content: "gdhxfnxb", author: "Naklal Kalov", status: "", },
+            'task-2': { id: 'task-2', content: "zfvzfv", author: "Kirill Submitov", status: "", },
+            'task-3': { id: 'task-3', content: "tezvzdfvzdst3", author: "Daniil Smirnov", status: "", },
+            'task-4': { id: 'task-4', content: "tzdveszdvzdfvzdt0", author: "Andrew Chugunov", status: "", },
+            'task-5': { id: 'task-5', content: "zdvdtefvzfdvfzdst0", author: "Lana Sashovayz", status: "", },
+            'task-6': { id: 'task-6', content: "tesvzdfvzdvt1", author: "Aleksey Romanov", status: "", },
+            'task-7': { id: 'task-7', content: "ya kal-naklal", author: "tester", status: "", },
         })),
         columns: new Map(Object.entries({
             'column-0': {
                 id: 'column-0',
                 tittle: 'To do',
-                taskIds: ['task-0', 'task-5', 'task-2'],
+                taskIds: ['task-5', 'task-2'],
                 publicAccess: 'everyone',
                 localAccess: true,
             },
@@ -71,13 +71,46 @@ export default class Board extends React.Component {
         columnOrder: ['column-0', 'column-1', 'column-2', 'column-3'],
     };
 
-    newTask = (colId, content) => {
+    editTask = (task, content) => {
         let newTasks = _.cloneDeep(this.state.tasks);
-        let newNumOfTasks = newTasks.size;
+
+        newTasks.set(task.id, {
+            id: `${task.id}`,
+            content: content,
+            author: task.author,
+            status: 'edited',
+        });
+        this.setState({
+            tasks: newTasks,
+        });
+    }
+
+    findFirstFreeId(map) {
+        const pref = map.has('task-0') ? 'task-' : 'column-';
+        for (let el of map.entries())
+            if (el[1].status === 'deleted') return el[0];
+        return `${pref}${map.size}`;
+    }
+
+    deleteTask = (colId, taskId) => {
+        let newTasks = _.cloneDeep(this.state.tasks);
         let newColumn = this.state.columns.get(colId);
 
-        newTasks.set(`task-${newNumOfTasks}`, { id: `task-${newNumOfTasks}`, content: content, author: "tester" });
-        newColumn.taskIds.push(`task-${newNumOfTasks}`);
+        newTasks.set(taskId, { id: taskId, content: "task was deleted", author: "scrum board system", status: "deleted" });
+        const newState = _.cloneDeep(this.state);
+        newState.tasks = newTasks;
+        newColumn.taskIds.splice(newColumn.taskIds.indexOf(taskId), 1);
+        newState.columns.set(newColumn.id, newColumn);
+        this.setState(newState);
+    }
+
+    newTask = (colId, content) => {
+        let newTasks = _.cloneDeep(this.state.tasks);
+        let newIndOfTask = this.findFirstFreeId(newTasks);
+        let newColumn = this.state.columns.get(colId);
+
+        newTasks.set(newIndOfTask, { id: newIndOfTask, content: content, author: "tester", status: "" });
+        newColumn.taskIds.push(newIndOfTask);
         const newState = _.cloneDeep(this.state);
         newState.tasks = newTasks;
         newState.columns.set(newColumn.id, newColumn);
@@ -197,6 +230,8 @@ export default class Board extends React.Component {
                                             taskMap={this.state.tasks}
                                             index={index}
                                             newTask={this.newTask}
+                                            deleteTask={this.deleteTask}
+                                            editTask={this.editTask}
                                         />
                                     );
                                 })}

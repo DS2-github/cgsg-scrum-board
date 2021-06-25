@@ -15,11 +15,20 @@ const Container = styled.div`
 `;
 
 const Content = styled.p`
+  overflow-wrap: break-word;
+  height: fit-context;
   font-size: 21px;
   border: 0;
 `;
 
+const Status = styled.i`
+  font-color: grey;
+  display:inline-block;
+  font-size: 10px;
+`
+
 const Author = styled.p`
+  display:inline-block;
   font-size: 14px;
 `;
 
@@ -40,12 +49,12 @@ export default class Task extends React.Component {
                             >
                                 <Content>{this.props.task.content}</Content>
                                 <Author>{this.props.task.author}</Author>
+                                <Status>{this.props.task.status !== "" ? `(${this.props.task.status})` : ""}</Status>
                             </Container>
                         </ContextMenuTrigger>
-
-                        {/* V pole "properties" ya prosto peredayu vse dermo v contextmenu;
-                            Nuzhni functions clone, delete, edit */}
-                        <ContextMenuAdd task={this.props.task} />
+                        <ContextMenuAdd task={this.props.task} colId={this.props.colId}
+                            editTask={this.props.editTask} cloneTask={this.props.cloneTask}
+                            deleteTask={this.props.deleteTask} />
                     </div>
                 )}
             </Draggable>

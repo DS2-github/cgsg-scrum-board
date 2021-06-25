@@ -47,12 +47,12 @@ class InnerList extends React.Component {
         return true;
     }
     render() {
-        let tasks = [];
-        for (let tsk of this.props.tasks.values()) {
-            tasks.push(tsk);
-        }
+        let tasks = this.props.tasks.filter(tsk => tsk.status !== 'deleted');
         return tasks.map((task, index) => (
-            <Task key={task.id} task={task} index={index} />
+            <Task key={task.id} task={task} index={index} colId={this.props.colId}
+                editTask={this.props.editTask} cloneTask={this.props.cloneTask}
+                deleteTask={this.props.deleteTask}
+            />
         ));
     }
 }
@@ -76,7 +76,10 @@ export default class Column extends React.Component {
                                     {...provided.droppableProps}
                                     isDraggingOver={snapshot.isDraggingOver}
                                 >
-                                    <InnerList tasks={this.props.tasks} />
+                                    <InnerList tasks={this.props.tasks} colId={this.props.column.id}
+                                        editTask={this.props.editTask} cloneTask={this.props.newTask}
+                                        deleteTask={this.props.deleteTask}
+                                    />
                                     {provided.placeholder}
                                 </TaskList>
                             )}
