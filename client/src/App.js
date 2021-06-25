@@ -5,6 +5,8 @@ import mainPage from './pages/main/main-page'
 
 const routes = [
     { path: '/', Component: mainPage },
+    { path: '/signIn', Component: SignUp },
+    { path: '/signUp', Component: SignIn },
 ]
 
 class App extends Component {
