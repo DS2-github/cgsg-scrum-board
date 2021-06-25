@@ -11,7 +11,6 @@ const Container = styled.div`
 `
 
 class SignUpForm extends React.Component {
-
   constructor(props) {
     super(props);
 
@@ -103,7 +102,7 @@ class SignUpForm extends React.Component {
           Sign up
         </Button>
         {this.errorDiv}
-      </Form >
+      </Form>
     );
   }
 }
@@ -116,7 +115,7 @@ function SignUp(props) {
           <SignUpForm />
         </Grid.Row>
       </Grid>
-    </Container >
+    </Container>
   );
 }
 
