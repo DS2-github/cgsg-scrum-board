@@ -41,12 +41,24 @@ async function updateCard(id, new_content) {
     };
 }
 
+async function deleteCard(id) {
+    const card = await cardModel.findOneAndDelete({ id });
+
+    if (!card) { throw new Error(`DB Err in deleting card(id: ${id})`); }
+
+    return {
+        id: id,
+        content: card.content,
+        author: card.author,
+    };
+}
+
 io.on('connection', (socket) => {
     console.log(`a user connected: ${socket.id}`);
 
     const db = mongoose.connection;
 
-    socket.on('addCard', (data_json) => {
+    socket.on('AddCard', (data_json) => {
         const { id, content, author, } = JSON.parse(data_json);
         const card = new cardModel({ id: id, content: content, author: author, });
 
@@ -71,6 +83,16 @@ io.on('connection', (socket) => {
             .then(card => {
                 console.log(card);
                 socket.emit('UpdateCard', JSON.stringify(card));
+            })
+            .catch(err => { console.error(err) });
+    })
+    socket.on('DeleteCard', (data_json) => {
+        const { id } = JSON.parse(data_json);
+
+        deleteCard(id)
+            .then(card => {
+                console.log(`Deleted: ${card}`);
+                //socket.emit('DeleteCard', JSON.stringify(card));  //DS2 said we don't need it.
             })
             .catch(err => { console.error(err) });
     })
