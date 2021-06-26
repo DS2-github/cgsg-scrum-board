@@ -18,6 +18,13 @@ io.on('connection', (socket) => {
 
     const db = mongoose.connection;
 
+    cardController.restoreCards()
+        .then(cards => {
+            console.log(cards);
+            io.emit('restoreCards', cards);
+        })
+        .catch(err => { console.error(err) });
+
     socket.on('addCard', (data) => {
         const card = new cardModel({ id: data.id, content: data.content, author: data.author, status: data.status, colId: data.colId });
         const emptyCard = new cardModel({ id: data.id, colId: data.colId, content: '', author: data.author, status: 'loading' });
@@ -32,7 +39,7 @@ io.on('connection', (socket) => {
                 //Should we send emit about failure to stop loading status???
                 console.error(err);
             });
-    })
+    });
     socket.on('editCard', (data) => {
         cardController.updateCard(data.id, data.content, 'edited')
             .then(card => {
@@ -40,7 +47,7 @@ io.on('connection', (socket) => {
                 socket.emit('editCard', card);
             })
             .catch(err => { console.error(err) });
-    })
+    });
     socket.on('delCard', (data) => {
         cardController.updateCard(data.id, '', 'deleted')
             .then(card => {
@@ -48,7 +55,7 @@ io.on('connection', (socket) => {
                 socket.emit('delCard', card);
             })
             .catch(err => { console.error(err) });
-    })
+    });
 
     socket.on('disconnect', () => {
         console.log('user disconnected');
