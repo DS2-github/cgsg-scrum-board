@@ -11,7 +11,6 @@ const Container = styled.div`
   overflow: auto;
 `
 
-
 function findFirstFreeId(map) {
   const pref = map.has('task-0') ? 'task-' : 'column-';
   for (let el of map.entries())
@@ -122,7 +121,7 @@ function boardReducer(state, action) {
       newState.columnOrder = newColumnOrder;
       return newState;
     }
-    ///////////////////////
+    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     case 'addTask': {
       action.socket.emit("addCard", { id: findFirstFreeId(state.tasks), content: action.content, colId: action.colId, author: "tester" });
       return state;
@@ -200,8 +199,8 @@ function Main(props) {
       dispatch({ type: 'addTaskSocket', task });
     });
     session.socket.on("restoreCards", cards => {
-      let newTasks = new Map();
-      let newColumns = new Map()
+      let newTasks = _.cloneDeep(state.tasks);
+      let newColumns = _.cloneDeep(state.columns)
       cards.forEach(card => {
         newTasks.set(card.id, { id: card.id, content: card.content, colId: card.colId, author: card.author, status: card.status })
         let newColumn = state.columns.get(card.colId);
