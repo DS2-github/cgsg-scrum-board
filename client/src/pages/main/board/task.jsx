@@ -52,7 +52,7 @@ export default class Task extends React.Component {
                                 <Status>{this.props.task.status !== "" ? `(${this.props.task.status})` : ""}</Status>
                             </Container>
                         </ContextMenuTrigger>
-                        <ContextMenuAdd task={this.props.task} colId={this.props.colId}
+                        <ContextMenuAdd task={this.props.task} s
                             dispatch={this.props.dispatch} />
                     </div>
                 )}

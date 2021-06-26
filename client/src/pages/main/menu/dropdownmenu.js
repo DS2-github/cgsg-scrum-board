@@ -1,7 +1,8 @@
-import React, { useState, useReducer } from 'react'
+import React, { useState, useReducer, useContext } from 'react'
 import styled from 'styled-components'
 import 'semantic-ui-css/semantic.min.css'
 import { Modal, Button, Icon, Input, Dropdown } from 'semantic-ui-react'
+import { Context } from '../../../index';
 
 const Container = styled.button`
   border: 0;
@@ -66,9 +67,13 @@ function RenameList(props) {
                 <Button basic color='red' inverted onClick={() => disp2({ type: 'close', value: value })}>
                     <Icon name='remove' /> Cancel
           </Button>
-                <Button color='green' inverted onClick={() => {
-                    props.dispatch({ type: 'renameList', colId: props.column.id, tittle: value }); disp2({ type: 'close', value: value })
-                }}>
+                <Button color='green' inverted
+                    onClick={() => {
+                        props.dispatch({
+                            type: 'renameList', colId: props.column.id, tittle: value, socket: props.socket
+                        });
+                        disp2({ type: 'close', value: value })
+                    }}>
                     <Icon name='checkmark' /> Confirm
           </Button>
             </Modal.Actions>
@@ -99,7 +104,13 @@ function AddTask(props) {
                 <Button basic color='red' inverted onClick={() => disp({ type: 'close', value: "" })}>
                     <Icon name='remove' /> Cancel
                     </Button>
-                <Button color='green' inverted onClick={() => { props.dispatch({ type: 'addTask', colId: props.colId, content: value }); disp({ type: 'close', value: "" }) }}>
+                <Button color='green' inverted
+                    onClick={() => {
+                        props.dispatch({
+                            type: 'addTask', colId: props.colId, content: value, socket: props.socket
+                        });
+                        disp({ type: 'close', value: "" })
+                    }}>
                     <Icon name='checkmark' /> Confirm
                     </Button>
             </Modal.Actions>
@@ -130,7 +141,7 @@ function AddList(props) {
                 <Button basic color='red' inverted onClick={() => disp3({ type: 'close', value: "" })}>
                     <Icon name='remove' /> Cancel
                     </Button>
-                <Button color='green' inverted onClick={() => { props.dispatch({ type: 'addList', tittle: value }); disp3({ type: 'close', value: "" }) }}>
+                <Button color='green' inverted onClick={() => { props.dispatch({ type: 'addList', tittle: value, socket: props.socket }); disp3({ type: 'close', value: "" }) }}>
                     <Icon name='checkmark' /> Confirm
                     </Button>
             </Modal.Actions>
@@ -139,26 +150,30 @@ function AddList(props) {
 }
 
 export default function DropDownMenu(props) {
+    const session = useContext(Context);
     return (
         <Container>
             <Dropdown pointing='left' className='link item' icon="ellipsis vertical" closeOnChange={true}>
                 <Dropdown.Menu>
                     <AddTask
                         dispatch={props.dispatch}
+                        socket={session.socket}
                         colId={props.column.id}
                         trigger={<Dropdown.Item icon="plus" content="New task" />}
                     />
                     {/*<Dropdown.Item icon="delete" content="Clear list" />*/}
                     <AddList
                         dispatch={props.dispatch}
+                        socket={session.socket}
                         trigger={<Dropdown.Item icon="folder" content="Add list" />}
                     />
                     <RenameList
                         dispatch={props.dispatch}
+                        socket={session.socket}
                         column={props.column}
                         trigger={<Dropdown.Item icon="edit" content="Rename list" />}
                     />
-                    <Dropdown.Item icon="trash" content="Delete list" onClick={() => props.dispatch({ type: 'deleteList', colId: props.column.id })} />
+                    <Dropdown.Item icon="trash" content="Delete list" onClick={() => props.dispatch({ type: 'deleteList', colId: props.column.id, socket: session.socket })} />
                 </Dropdown.Menu>
             </Dropdown>
         </Container>

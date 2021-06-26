@@ -4,7 +4,6 @@ import TopMenu from './menu/top-menu';
 import styled from 'styled-components';
 import { Context } from '../../index';
 import * as _ from 'lodash';
-import { before } from 'lodash';
 
 const Container = styled.div`
   display: inline-block;
@@ -22,7 +21,7 @@ function findFirstFreeId(map) {
 
 const initialState = {
   tasks: new Map(Object.entries({
-    'task-0': { id: 'task-0', content: "", author: "tester", status: "deleted", },
+    'task-0': { id: 'task-0', content: "", colId: "", author: "tester", status: "deleted", },
   })),
   columns: new Map(Object.entries({
     'column-0': {
@@ -56,17 +55,77 @@ const initialState = {
 
 function boardReducer(state, action) {
   switch (action.type) {
-    case 'addTask': {
+    case 'addTaskSocket': {
       let newTasks = _.cloneDeep(state.tasks);
-      let newIndOfTask = findFirstFreeId(newTasks);
-      let newColumn = state.columns.get(action.colId);
+      let newColumn = state.columns.get(action.task.colId);
 
-      newTasks.set(newIndOfTask, { id: newIndOfTask, content: action.content, author: "tester", status: "" });
-      newColumn.taskIds.push(newIndOfTask);
+      newTasks.set(action.task.id, { id: action.task.id, content: action.task.content, colId: action.task.colId, author: action.task.author, status: action.task.status });
+      newColumn.taskIds.push(action.task.id);
       const newState = _.cloneDeep(state);
       newState.tasks = newTasks;
       newState.columns.set(newColumn.id, newColumn);
       return newState;
+    }
+    case 'editTaskSocket': {
+      let newTasks = _.cloneDeep(state.tasks);
+      let newTask = newTasks.get(action.taskId);
+      newTask.content = _.clone(action.content);
+      newTask.status = 'edited';
+      newTasks.set(action.taskId, newTask);
+
+      const newState = _.cloneDeep(state);
+      newState.tasks = newTasks;
+
+      return newState;
+    }
+    case 'deleteTaskSocket': {
+      let newTasks = _.cloneDeep(state.tasks);
+      let newColumn = state.columns.get(action.colId);
+
+      newTasks.set(action.taskId, { id: action.taskId, content: "task was deleted", colId: "", author: "scrum board system", status: "deleted" });
+      const newState = _.cloneDeep(state);
+      newState.tasks = newTasks;
+      newColumn.taskIds.splice(newColumn.taskIds.indexOf(action.taskId), 1);
+      newState.columns.set(newColumn.id, newColumn);
+      return newState;
+    }
+    case 'addListSocket': {
+      let newColumns = _.cloneDeep(state.columns);
+      let newIndOfColemn = findFirstFreeId(newColumns);
+      let newColumnOrder = _.cloneDeep(state.columnOrder);
+
+      newColumns.set(newIndOfColemn, { id: newIndOfColemn, tittle: action.tittle, taskIds: [], status: "" });
+      newColumnOrder.push(newIndOfColemn);
+      const newState = _.cloneDeep(state);
+      newState.columns = newColumns;
+      newState.columnOrder = _.clone(newColumnOrder);
+      return newState;
+    }
+    case 'renameListSocket': {
+      let newColumns = _.cloneDeep(state.columns);
+      let newColumn = newColumns.get(action.colId);
+      newColumn.tittle = _.clone(action.tittle);
+      newColumns.set(action.colId, newColumn);
+      const newState = _.cloneDeep(state);
+      newState.columns = newColumns;
+
+      return newState;
+    }
+    case 'deleteListSocket': {
+      let newColumns = _.cloneDeep(state.columns);
+      let newColumnOrder = _.cloneDeep(state.columnOrder);
+
+      newColumns.set(action.colId, { id: action.colId, tittle: "list was deleted", taskIds: [], status: "deleted" });
+      const newState = _.cloneDeep(state);
+      newState.columns = newColumns;
+      newColumnOrder.splice(newColumnOrder.indexOf(action.colId), 1);
+      newState.columnOrder = newColumnOrder;
+      return newState;
+    }
+    ///////////////////////
+    case 'addTask': {
+      action.socket.emit("addCard", { id: findFirstFreeId(state.tasks), content: action.content, colId: action.colId, author: "tester" });
+      return state;
     }
     case 'editTask': {
       let newTasks = _.cloneDeep(state.tasks);
@@ -84,7 +143,7 @@ function boardReducer(state, action) {
       let newTasks = _.cloneDeep(state.tasks);
       let newColumn = state.columns.get(action.colId);
 
-      newTasks.set(action.taskId, { id: action.taskId, content: "task was deleted", author: "scrum board system", status: "deleted" });
+      newTasks.set(action.taskId, { id: action.taskId, content: "task was deleted", colId: "", author: "scrum board system", status: "deleted" });
       const newState = _.cloneDeep(state);
       newState.tasks = newTasks;
       newColumn.taskIds.splice(newColumn.taskIds.indexOf(action.taskId), 1);
@@ -134,18 +193,27 @@ function boardReducer(state, action) {
 function Main(props) {
   const session = useContext(Context);
 
-
   const [state, dispatch] = useReducer(boardReducer, initialState);
 
-  const getCard = useCallback(({ colId, content }) => {
-    session.socket.emit("getData");
-  })
-
   useEffect(() => {
-    session.socket.on("get", data => {
-      console.log(data);
-    })
-  })
+    session.socket.on("addCard", task => {
+      dispatch({ type: 'addTaskSocket', task });
+    });
+    session.socket.on("restoreCards", cards => {
+      let newTasks = new Map();
+      let newColumns = new Map()
+      cards.forEach(card => {
+        newTasks.set(card.id, { id: card.id, content: card.content, colId: card.colId, author: card.author, status: card.status })
+        let newColumn = state.columns.get(card.colId);
+        newColumn.taskIds.push(card.id);
+        newColumns.set(card.colId, newColumn);
+      })
+      const newState = _.cloneDeep(state);
+      newState.tasks = _.cloneDeep(newTasks);
+      newState.columns = _.cloneDeep(newColumns);
+      dispatch({ type: 'setState', state: newState });
+    });
+  }, []);
 
   return (
     <div>

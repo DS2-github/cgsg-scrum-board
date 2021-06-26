@@ -102,11 +102,14 @@ export default class Board extends React.PureComponent {
 
         const foreignTaskIds = Array.from(foreign.taskIds);
         foreignTaskIds.splice(destination.index, 0, draggableId);
+        let newTask = _.cloneDeep(this.props.state.tasks.get(draggableId));
         const newForeign = {
             ...foreign,
             taskIds: foreignTaskIds,
         };
+        newTask.colId = newForeign.id;
         const newState = _.cloneDeep(this.props.state);
+        newState.tasks.set(draggableId, newTask);
         newState.columns.set(newHome.id, newHome);
         newState.columns.set(newForeign.id, newForeign);
         this.props.dispatch({ type: 'setState', state: newState });
