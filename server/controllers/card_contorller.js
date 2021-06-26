@@ -15,7 +15,8 @@ class cardController {
             id: id,
             content: card.content,
             author: card.author,
-            status: card.status
+            status: card.status,
+            colId: card.colId
         };
     }
 }

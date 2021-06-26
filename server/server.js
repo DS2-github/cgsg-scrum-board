@@ -19,14 +19,14 @@ io.on('connection', (socket) => {
     const db = mongoose.connection;
 
     socket.on('addCard', (data_json) => {
-        const { id, content, author, } = JSON.parse(data_json);
-        const card = new cardModel({ id: id, content: content, author: author, status: '' });
-        const emptyCard = new cardModel({ id: id, content: '', author: '', status: 'loading' });
+        const { id, content, author, colId } = JSON.parse(data_json);
+        const card = new cardModel({ id: id, content: content, author: author, status: '', colId: colId });
+        const emptyCard = new cardModel({ id: id, colId: colId, content: '', author: '', status: 'loading' });
 
         socket.emit('emptyCard', JSON.stringify(emptyCard));
         cardController.addCard(card)
             .then(doc => {
-                socket.emit('getCard', JSON.stringify(card));
+                socket.emit('addCard', JSON.stringify(card));
                 console.log(doc);
             })
             .catch(err => {
@@ -40,7 +40,7 @@ io.on('connection', (socket) => {
         cardController.updateCard(id, content, 'edited')
             .then(card => {
                 console.log(card);
-                socket.emit('getCard', JSON.stringify(card));
+                socket.emit('editCard', JSON.stringify(card));
             })
             .catch(err => { console.error(err) });
     })
