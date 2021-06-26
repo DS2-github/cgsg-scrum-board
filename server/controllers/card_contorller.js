@@ -19,6 +19,12 @@ class cardController {
             colId: card.colId
         };
     }
+
+    async restoreCards() {
+        const cards = await cardModel.find();
+
+        return cards;
+    }
 }
 
 module.exports = new cardController();
