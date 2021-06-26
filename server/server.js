@@ -6,93 +6,51 @@ const { Server } = require("socket.io");
 const io = new Server(server);
 const port = 8000;
 const cardModel = require('./models/card_model');
+const cardController = require('./controllers/card_contorller');
 /*
 app.set('socketio', io);
 const router = require('./router');
 app.use('/router', router);
 */
 
-async function addCard(card) {
-    await card.save();
-    console.log(card);
-}
-
-async function readCard(id) {
-    const card = await cardModel.findOne({ id });
-
-    if (!card) { throw new Error(`DB Err in reading (id: ${id}) collection`); }
-
-    return {
-        id: id,
-        content: card.content,
-        author: card.author,
-    };
-}
-
-async function updateCard(id, new_content) {
-    const card = await cardModel.findOneAndUpdate({ id }, { content: new_content });
-
-    if (!card) { throw new Error(`DB Err in updating card(id: ${id})`); }
-
-    return {
-        id: id,
-        content: card.content,
-        author: card.author,
-    };
-}
-
-async function deleteCard(id) {
-    const card = await cardModel.findOneAndDelete({ id });
-
-    if (!card) { throw new Error(`DB Err in deleting card(id: ${id})`); }
-
-    return {
-        id: id,
-        content: card.content,
-        author: card.author,
-    };
-}
-
 io.on('connection', (socket) => {
     console.log(`a user connected: ${socket.id}`);
 
     const db = mongoose.connection;
 
-    socket.on('AddCard', (data_json) => {
+    socket.on('addCard', (data_json) => {
         const { id, content, author, } = JSON.parse(data_json);
-        const card = new cardModel({ id: id, content: content, author: author, });
+        const card = new cardModel({ id: id, content: content, author: author, status: '' });
+        const emptyCard = new cardModel({ id: id, content: '', author: '', status: 'loading' });
 
-        addCard(card)
-            .then(doc => { console.log(doc); })
-            .catch(err => { console.error(err) });
-    })
-    socket.on('ReadCard', (data_json) => {
-        const { id } = JSON.parse(data_json);
-        //const user = 
-        readCard(id)
-            .then(card => {
-                console.log(card);
-                socket.emit('ReadCard', JSON.stringify(card));
+        socket.emit('emptyCard', JSON.stringify(emptyCard));
+        cardController.addCard(card)
+            .then(doc => {
+                socket.emit('getCard', JSON.stringify(card));
+                console.log(doc);
             })
-            .catch(err => { console.error(err) });
+            .catch(err => {
+                //Should we send emit about failure to stop loading status???
+                console.error(err);
+            });
     })
-    socket.on('UpdateCard', (data_json) => {
+    socket.on('editCard', (data_json) => {
         const { id, content } = JSON.parse(data_json);
 
-        updateCard(id, content)
+        cardController.updateCard(id, content, 'edited')
             .then(card => {
                 console.log(card);
-                socket.emit('UpdateCard', JSON.stringify(card));
+                socket.emit('getCard', JSON.stringify(card));
             })
             .catch(err => { console.error(err) });
     })
-    socket.on('DeleteCard', (data_json) => {
+    socket.on('delCard', (data_json) => {
         const { id } = JSON.parse(data_json);
 
-        deleteCard(id)
+        cardController.updateCard(id, '', 'deleted')
             .then(card => {
                 console.log(`Deleted: ${card}`);
-                //socket.emit('DeleteCard', JSON.stringify(card));  //DS2 said we don't need it.
+                socket.emit('delCard', JSON.stringify(card));
             })
             .catch(err => { console.error(err) });
     })
