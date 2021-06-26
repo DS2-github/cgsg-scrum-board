@@ -10,15 +10,16 @@ const Container = styled.div`
 
 class InnerList extends React.PureComponent {
     render() {
-        const { column, taskMap, index, newTask, editTask, deleteTask, renameList, deleteList } = this.props;
+        const { column, taskMap, index, newTask, editTask, deleteTask, renameList, deleteList, newList } = this.props;
         const tasks = column.taskIds.map(taskId => taskMap.get(taskId));
         return (<Column
             column={column} tasks={tasks} index={index}
             newTask={newTask} editTask={editTask} deleteTask={deleteTask}
-            renameList={renameList} deleteList={deleteList}
+            renameList={renameList} deleteList={deleteList} newList={newList}
         />);
     }
 }
+
 
 const Brd = styled.div`
   position:absolute;
@@ -92,6 +93,19 @@ export default class Board extends React.Component {
         newState.columns = newColumns;
         newColumnOrder.splice(newColumnOrder.indexOf(colId), 1);
         newState.columnOrder = newColumnOrder;
+        this.setState(newState);
+    }
+
+    newList = (tittle) => {
+        let newColumns = _.cloneDeep(this.state.columns);
+        let newIndOfColemn = this.findFirstFreeId(newColumns);
+        let newColumnOrder = _.cloneDeep(this.state.columnOrder);
+
+        newColumns.set(newIndOfColemn, { id: newIndOfColemn, tittle: tittle, taskIds: [], status: "" });
+        newColumnOrder.push(newIndOfColemn);
+        const newState = _.cloneDeep(this.state);
+        newState.columns = newColumns;
+        newState.columnOrder = _.clone(newColumnOrder);
         this.setState(newState);
     }
 
@@ -255,6 +269,7 @@ export default class Board extends React.Component {
                                             editTask={this.editTask}
                                             renameList={this.renameList}
                                             deleteList={this.deleteList}
+                                            newList={this.newList}
                                         />
                                     );
                                 })}

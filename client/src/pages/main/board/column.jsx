@@ -65,7 +65,9 @@ export default class Column extends React.Component {
                             </Title>
                             <DropDownMenu
                                 column={this.props.column}
-                                newTask={this.props.newTask} renameList={this.props.renameList} deleteList={this.props.deleteList} />
+                                newTask={this.props.newTask} renameList={this.props.renameList} deleteList={this.props.deleteList}
+                                newList={this.props.newList}
+                            />
                         </div>
                         <Droppable droppableId={this.props.column.id} type="task">
                             {(provided, snapshot) => (

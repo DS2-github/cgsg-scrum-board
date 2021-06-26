@@ -107,6 +107,37 @@ function AddTask(props) {
     );
 }
 
+function AddList(props) {
+    const [state, dispatch3] = useReducer(addReducer, {
+        open: false,
+        value: "",
+    })
+    const { open, value } = state;
+    return (
+        <Modal
+            basic
+            open={open}
+            onOpen={() => dispatch3({ type: 'open' })}
+            onClose={() => dispatch3({ type: 'close' })}
+            size='large'
+            dimmer='blurring'
+            trigger={props.trigger}
+        >
+            <Modal.Content>
+                <Inpt dispatch={dispatch3} value={value} />
+            </Modal.Content>
+            <Modal.Actions>
+                <Button basic color='red' inverted onClick={() => dispatch3({ type: 'close', value: "" })}>
+                    <Icon name='remove' /> Cancel
+                    </Button>
+                <Button color='green' inverted onClick={() => { props.newList(value); dispatch3({ type: 'close', value: "" }) }}>
+                    <Icon name='checkmark' /> Confirm
+                    </Button>
+            </Modal.Actions>
+        </Modal>
+    );
+}
+
 export default function DropDownMenu(props) {
     return (
         <Container>
@@ -117,8 +148,11 @@ export default function DropDownMenu(props) {
                         colId={props.column.id}
                         trigger={<Dropdown.Item icon="plus" content="New task" />}
                     />
-                    {/*<Dropdown.Item icon="delete" content="Clear list" />
-                    <Dropdown.Item icon="folder" content="Add list" />*/}
+                    {/*<Dropdown.Item icon="delete" content="Clear list" />*/}
+                    <AddList
+                        newList={props.newList}
+                        trigger={<Dropdown.Item icon="folder" content="Add list" />}
+                    />
                     <RenameList
                         renameList={props.renameList}
                         column={props.column}
