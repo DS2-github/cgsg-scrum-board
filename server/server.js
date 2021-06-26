@@ -18,15 +18,14 @@ io.on('connection', (socket) => {
 
     const db = mongoose.connection;
 
-    socket.on('addCard', (data_json) => {
-        const { id, content, author, colId } = JSON.parse(data_json);
-        const card = new cardModel({ id: id, content: content, author: author, status: '', colId: colId });
-        const emptyCard = new cardModel({ id: id, colId: colId, content: '', author: '', status: 'loading' });
+    socket.on('addCard', (data) => {
+        const card = new cardModel({ id: data.id, content: data.content, author: data.author, status: data.status, colId: data.colId });
+        const emptyCard = new cardModel({ id: data.id, colId: data.colId, content: '', author: data.author, status: 'loading' });
 
-        socket.emit('emptyCard', JSON.stringify(emptyCard));
+        socket.emit('emptyCard', emptyCard);
         cardController.addCard(card)
             .then(doc => {
-                socket.emit('addCard', JSON.stringify(card));
+                socket.emit('addCard', card);
                 console.log(doc);
             })
             .catch(err => {
@@ -34,23 +33,19 @@ io.on('connection', (socket) => {
                 console.error(err);
             });
     })
-    socket.on('editCard', (data_json) => {
-        const { id, content } = JSON.parse(data_json);
-
-        cardController.updateCard(id, content, 'edited')
+    socket.on('editCard', (data) => {
+        cardController.updateCard(data.id, data.content, 'edited')
             .then(card => {
                 console.log(card);
-                socket.emit('editCard', JSON.stringify(card));
+                socket.emit('editCard', card);
             })
             .catch(err => { console.error(err) });
     })
-    socket.on('delCard', (data_json) => {
-        const { id } = JSON.parse(data_json);
-
-        cardController.updateCard(id, '', 'deleted')
+    socket.on('delCard', (data) => {
+        cardController.updateCard(data.id, '', 'deleted')
             .then(card => {
                 console.log(`Deleted: ${card}`);
-                socket.emit('delCard', JSON.stringify(card));
+                socket.emit('delCard', card);
             })
             .catch(err => { console.error(err) });
     })
