@@ -45,8 +45,7 @@ class InnerList extends React.Component {
         let tasks = this.props.tasks.filter(tsk => tsk.status !== 'deleted');
         return tasks.map((task, index) => (
             <Task key={task.id} task={task} index={index} colId={this.props.colId}
-                editTask={this.props.editTask} cloneTask={this.props.cloneTask}
-                deleteTask={this.props.deleteTask}
+                dispatch={this.props.dispatch}
             />
         ));
     }
@@ -64,8 +63,7 @@ export default class Column extends React.Component {
                             </Title>
                             <DropDownMenu
                                 column={this.props.column}
-                                newTask={this.props.newTask} renameList={this.props.renameList} deleteList={this.props.deleteList}
-                                newList={this.props.newList}
+                                dispatch={this.props.dispatch}
                             />
                         </div>
                         <Droppable droppableId={this.props.column.id} type="task">
@@ -76,8 +74,7 @@ export default class Column extends React.Component {
                                     isDraggingOver={snapshot.isDraggingOver}
                                 >
                                     <InnerList tasks={this.props.tasks} colId={this.props.column.id}
-                                        editTask={this.props.editTask} cloneTask={this.props.newTask}
-                                        deleteTask={this.props.deleteTask}
+                                        dispatch={this.props.dispatch}
                                     />
                                     {provided.placeholder}
                                 </TaskList>

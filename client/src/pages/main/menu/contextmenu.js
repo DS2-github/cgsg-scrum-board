@@ -25,14 +25,14 @@ class Inpt extends React.Component {
       <Input
         ref={(input) => { this.input = input; }}
         fluid defaultValue={this.props.content}
-        onChange={(event) => this.props.dispatch({ type: 'update', value: event.target.value })}
+        onChange={(event) => this.props.disp({ type: 'update', value: event.target.value })}
       />
     );
   }
 }
 
 function EditTask(props) {
-  const [state, dispatch] = useReducer(editReducer, {
+  const [state, disp] = useReducer(editReducer, {
     open: false,
     value: "",
   })
@@ -41,23 +41,23 @@ function EditTask(props) {
     <Modal
       basic
       open={open}
-      onOpen={() => dispatch({ type: 'open', value: props.task.content })}
-      onClose={() => dispatch({ type: 'close' })}
+      onOpen={() => disp({ type: 'open', value: props.task.content })}
+      onClose={() => disp({ type: 'close' })}
       size='large'
       dimmer='blurring'
       trigger={props.trigger}
     >
       <Modal.Content>
-        <Inpt dispatch={dispatch} content={value} />
+        <Inpt disp={disp} content={value} />
       </Modal.Content>
       <Modal.Actions>
-        <Button basic color='red' inverted onClick={() => dispatch({ type: 'close', value: value })}>
+        <Button basic color='red' inverted onClick={() => disp({ type: 'close', value: value })}>
           <Icon name='remove' /> Cancel
         </Button>
         <Button color='green' inverted onClick={() => {
           props.task.author !== "tester" ?
             alert("Access denied!") :
-            props.editTask(props.task.id, value); dispatch({ type: 'close', value: value })
+            props.dispatch({ type: 'editTask', taskId: props.task.id, content: value }); disp({ type: 'close', value: value })
         }}>
           <Icon name='checkmark' /> Confirm
         </Button>
@@ -75,12 +75,12 @@ export default class ContextMenuAdd extends React.Component {
           <MenuItem><Icon name="edit" />Edit</MenuItem>
         }
           task={this.props.task}
-          editTask={this.props.editTask}
+          dispatch={this.props.dispatch}
         />
-        <MenuItem onClick={() => { this.props.cloneTask(this.props.colId, this.props.task.content) }}>
+        <MenuItem onClick={() => { this.props.dispatch({ type: 'addTask', colId: this.props.colId, content: this.props.task.content }) }}>
           <Icon name="copy outline" color="black" />Clone
         </MenuItem>
-        <MenuItem onClick={() => { this.props.deleteTask(this.props.colId, this.props.task.id) }}>
+        <MenuItem onClick={() => { this.props.dispatch({ type: 'deleteTask', colId: this.props.colId, taskId: this.props.task.id }) }}>
           <Icon name="trash" />Delete
         </MenuItem>
       </ContextMenu>
