@@ -53,8 +53,7 @@ export default class Task extends React.Component {
                             </Container>
                         </ContextMenuTrigger>
                         <ContextMenuAdd task={this.props.task} colId={this.props.colId}
-                            editTask={this.props.editTask} cloneTask={this.props.cloneTask}
-                            deleteTask={this.props.deleteTask} />
+                            dispatch={this.props.dispatch} />
                     </div>
                 )}
             </Draggable>
