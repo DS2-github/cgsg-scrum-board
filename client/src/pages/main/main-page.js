@@ -6,27 +6,15 @@ import { Context } from '../../index';
 
 const Container = styled.div`
   display: inline-block;
-  max-width: 1300px;
-  
-  height: 95vh;
+  margin-top: 40px;
   overflow: auto;
 `
-
-const SideMenu = styled.div`
-  vertical-align: top;
-  display: inline-block;
-  width: 250px;
-  height: 95vh;
-`
-
 function Main(props) {
   const session = useContext(Context);
   return (
     <div>
       <TopMenu />
       <Container>
-        <SideMenu>
-        </SideMenu>
         <Board />
       </Container>
     </div>

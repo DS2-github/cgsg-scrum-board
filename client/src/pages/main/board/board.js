@@ -22,12 +22,10 @@ class InnerList extends React.PureComponent {
 
 
 const Brd = styled.div`
-  position:absolute;
-  vertical-align: top;
-  display: inline-block;
+  display: grid;
   padding: 0.5%;
   height: 95vh;
-  width: 1500px;
+  width: 100vw;
   overflow-x: scroll;
   box-shadow: -14px 0px 12px -11px rgba(34, 60, 80, 0.16);
 `

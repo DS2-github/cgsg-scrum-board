@@ -23,14 +23,13 @@ const Title = styled.h3`
 `;
 
 const TaskList = styled.div`
-  height: fit-context;
   width: 290px;
   padding: 8px;
   transition: background-color 0.1s ease;
   background-color: ${props =>
         props.isDraggingOver ? 'lightgrey' : 'inherit'};
   flex-grow: 1;
-  height: 80vh;
+  max-height: 770px;
   overflow-y: scroll;
   display: inline;
 `;

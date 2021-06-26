@@ -1,5 +1,12 @@
 import React from 'react';
 import 'semantic-ui-css/semantic.min.css'
+import styled from 'styled-components';
+
+
+const Top = styled.div`
+    width: 99vw;
+    position:fixed;
+`
 
 export default class TopMenu extends React.Component {
     constructor(props) {
@@ -18,7 +25,7 @@ export default class TopMenu extends React.Component {
     }
     render() {
         return (
-            <div>
+            <Top>
                 <div class="ui secondary pointing menu">
 
                     <button class={`${this.state.active[0] ? "active " : " "}item blue`} onClick={() => this.toggleChange(0)}>
@@ -36,7 +43,7 @@ export default class TopMenu extends React.Component {
                         </button>
                     </div>
                 </div>
-            </div>
+            </Top>
         );
     }
 }
