@@ -14,7 +14,7 @@ class listController {
 
         return {
             id: id,
-            title: list.title,
+            title: new_title,
             cards: list.cards,
             status: list.status
         };
@@ -29,7 +29,7 @@ class listController {
             id: id,
             title: list.title,
             cards: list.cards,
-            status: list.status
+            status: new_status
         };
     }
 
