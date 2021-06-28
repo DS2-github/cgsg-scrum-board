@@ -1,12 +1,12 @@
 const cardModel = require('../models/card_model');
 
 class cardController {
-    async addCard(card) {
+    async add(card) {
         await card.save();
         console.log(card);
     }
 
-    async updateCard(id, new_content, new_status) {
+    async update(id, new_content, new_status) {
         const card = await cardModel.findOneAndUpdate({ id }, { content: new_content, status: new_status });
 
         if (!card) { throw new Error(`DB Err in updating card(id: ${id})`); }
@@ -20,30 +20,10 @@ class cardController {
         };
     }
 
-    /*
-    return new Promise((resolve, reject) => {
-            const card = cardModel.findOneAndUpdate({ id }, { content: new_content, status: new_status });
-            if (!card) reject(`DB Err in updating card(id: ${id})`);
-            resolve(card);
-        })
-            .then(card => {
-                return {
-                    id: id,
-                    content: new_content,
-                    author: card.author,
-                    status: new_status,
-                    colId: card.colId
-                }
-            })
-            .catch(error => { throw new Error(error) });
-    */
-
-    async restoreCards() {
-        const cards = await cardModel.find();
-
-        return cards;
+    async restore() {
+        return await cardModel.find();
     }
-    async setStatusCard(id, new_status) {
+    async setStatus(id, new_status) {
         const card = await cardModel.findOneAndUpdate({ id }, { status: new_status });
 
         if (!card) { throw new Error(`DB Err in set status card(id: ${id})`); }

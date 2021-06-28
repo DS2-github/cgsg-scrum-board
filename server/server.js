@@ -22,20 +22,24 @@ io.on('connection', (socket) => {
 
     const db = mongoose.connection;
 
-    ///CARDS
-    cardController.restoreCards()
-        .then(cards => {
-            console.log(cards);
-            socket.emit('restoreCards', cards);
+    ///RESTORE
+    Promise.all([
+            new Promise(resolve => resolve(listController.restore())),
+            new Promise(resolve => resolve(cardController.restore())),
+        ])
+        .then(data => {
+            console.log(data);
+            socket.emit('restoreData', data);
         })
-        .catch(err => { console.error(err) });
+        ///.catch(err => { console.error(err) });
 
+    ///CARDS
     socket.on('addCard', (data) => {
         const card = new cardModel({ id: data.id, content: data.content, author: data.author, status: data.status, colId: data.colId });
         const emptyCard = new cardModel({ id: data.id, colId: data.colId, content: '', author: data.author, status: 'loading' });
 
         socket.emit('emptyCard', emptyCard);
-        cardController.addCard(card)
+        cardController.add(card)
             .then(doc => {
                 io.emit('addCard', card);
                 console.log(doc);
@@ -46,7 +50,7 @@ io.on('connection', (socket) => {
             });
     });
     socket.on('editCard', (data) => {
-        cardController.updateCard(data.id, data.content, 'edited')
+        cardController.update(data.id, data.content, 'edited')
             .then(card => {
                 console.log(card);
                 io.emit('editCard', card);
@@ -54,7 +58,7 @@ io.on('connection', (socket) => {
             .catch(err => { console.error(err) });
     });
     socket.on('delCard', (data) => {
-        cardController.setStatusCard(data.id, 'deleted')
+        cardController.setStatus(data.id, 'deleted')
             .then(card => {
                 console.log(`Deleted: ${card}`);
                 io.emit('delCard', card);
@@ -66,18 +70,17 @@ io.on('connection', (socket) => {
     socket.on('addList', (data) => {
         const list = new listModel({ id: data.id, title: data.title, cards: data.cards, status: data.status, });
 
-        listController.addList(list)
+        listController.add(list)
             .then(doc => {
                 io.emit('addList', list);
                 console.log(doc);
             })
             .catch(err => {
-                //Should we send emit about failure to stop loading status???
                 console.error(err);
             });
     });
     socket.on('renameList', (data) => {
-        listController.renameList(data.id, data.title)
+        listController.rename(data.id, data.title)
             .then(list => {
                 console.log(list);
                 io.emit('renameList', list);
@@ -85,18 +88,18 @@ io.on('connection', (socket) => {
             .catch(err => { console.error(err) });
     });
     socket.on('delList', (data) => {
-        listController.setStatusCard(data.id, 'deleted')
+        listController.setStatus(data.id, 'deleted')
             .then(list => {
                 console.log(`Deleted: ${list}`);
                 io.emit('delList', list);
             })
             .catch(err => { console.error(err) });
     });
-    socket.on('delAllCardsOfList', (data) => {
-        listController.delAllCardsOfList(data.id, 'deleted')
+    socket.on('clearList', (data) => {
+        listController.clear(data.id, 'deleted')
             .then(list => {
                 console.log(`Deleted: ${list}`);
-                io.emit('delAllCardsOfList', list);
+                io.emit('clearList', list);
             })
             .catch(err => { console.error(err) });
     });
@@ -120,7 +123,7 @@ async function StartServer() {
         const db = mongoose.connection;
         db.on('error', console.error.bind(console, 'connection error:'));
         db.once('open', _ => {
-            console.log('Database connected'/*:', connectionString*/);
+            console.log('Database connected' /*:', connectionString*/ );
         });
 
         server.listen(port, () => {

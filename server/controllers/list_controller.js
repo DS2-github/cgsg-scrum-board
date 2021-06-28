@@ -2,12 +2,12 @@ const listModel = require('../models/list_model');
 const cardController = require('./card_controller');
 
 class listController {
-    async addList(list) {
+    async add(list) {
         await list.save();
         console.log(list);
     }
 
-    async renameList(id, new_title) {
+    async rename(id, new_title) {
         const list = await listModel.findOneAndUpdate({ id }, { title: new_title });
 
         if (!list) { throw new Error(`DB Err in renaming list(id: ${id})`); }
@@ -20,7 +20,11 @@ class listController {
         };
     }
 
-    async setStatusCard(id, new_status) {
+    async restore() {
+        return await listModel.find();
+    }
+
+    async setStatus(id, new_status) {
         const list = await listModel.findOneAndUpdate({ id }, { status: new_status });
 
         if (!list) { throw new Error(`DB Err in set status list(id: ${id})`); }
@@ -33,13 +37,13 @@ class listController {
         };
     }
 
-    async delAllCardsOfList(id) {
+    async clear(id) {
         const list = await listModel.findOne({ id });
 
         if (!list) { throw new Error(`DB Err in set status list(id: ${id})`); }
 
         for (el of list.cards)
-            cardController.setStatusCard(el, 'deleted');
+            cardController.setStatus(el, 'deleted');
 
         return {
             id: id,
