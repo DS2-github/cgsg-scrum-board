@@ -17,7 +17,6 @@ function App(props) {
 
     return (
         <Router>
-            {session.isLoggedIn ? <Redirect to='/board' /> : <Redirect to='/signUp' />}
             <Switch>
                 {routes.map(({ path, Component }) => (
                     <Route key={path} path={path} exact>

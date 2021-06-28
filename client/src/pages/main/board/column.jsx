@@ -59,7 +59,7 @@ export default class Column extends React.Component {
                     <Container {...provided.draggableProps} innerRef={provided.innerRef}>
                         <div>
                             <Title {...provided.dragHandleProps}>
-                                {this.props.column.tittle}
+                                {this.props.column.title}
                             </Title>
                             <DropDownMenu
                                 column={this.props.column}

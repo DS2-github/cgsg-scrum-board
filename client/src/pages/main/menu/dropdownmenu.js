@@ -54,7 +54,7 @@ function RenameList(props) {
         <Modal
             basic
             open={open}
-            onOpen={() => disp2({ type: 'open', value: props.column.tittle })}
+            onOpen={() => disp2({ type: 'open', value: props.column.title })}
             onClose={() => disp2({ type: 'close' })}
             size='large'
             dimmer='blurring'
@@ -70,7 +70,7 @@ function RenameList(props) {
                 <Button color='green' inverted
                     onClick={() => {
                         props.dispatch({
-                            type: 'renameList', colId: props.column.id, tittle: value, socket: props.socket
+                            type: 'renameList', colId: props.column.id, title: value, socket: props.socket
                         });
                         disp2({ type: 'close', value: value })
                     }}>
@@ -141,7 +141,7 @@ function AddList(props) {
                 <Button basic color='red' inverted onClick={() => disp3({ type: 'close', value: "" })}>
                     <Icon name='remove' /> Cancel
                     </Button>
-                <Button color='green' inverted onClick={() => { props.dispatch({ type: 'addList', tittle: value, socket: props.socket }); disp3({ type: 'close', value: "" }) }}>
+                <Button color='green' inverted onClick={() => { props.dispatch({ type: 'addList', title: value, socket: props.socket }); disp3({ type: 'close', value: "" }) }}>
                     <Icon name='checkmark' /> Confirm
                     </Button>
             </Modal.Actions>

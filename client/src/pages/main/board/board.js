@@ -12,7 +12,7 @@ const Container = styled.div`
 class InnerList extends React.PureComponent {
     render() {
         const { column, taskMap, index, dispatch } = this.props;
-        const tasks = column.taskIds.map(taskId => taskMap.get(taskId));
+        const tasks = column.taskIds.map(taskId => { return taskMap.get(taskId) });
         return (<Column
             column={column} tasks={tasks} index={index}
             dispatch={dispatch}
@@ -29,7 +29,7 @@ const Brd = styled.div`
   box-shadow: -14px 0px 12px -11px rgba(34, 60, 80, 0.16);
 `
 
-export default class Board extends React.PureComponent {
+export default class Board extends React.Component {
     onDragStart = (start, provided) => {
         provided.announce(
             `You have lifted the task in position ${start.source.index + 1}`,
@@ -71,7 +71,7 @@ export default class Board extends React.PureComponent {
             newColumnOrder.splice(source.index, 1);
             newColumnOrder.splice(destination.index, 0, draggableId);
 
-            this.props.dispatch({ type: 'setState', state: { ...this.props.state, columnOrder: newColumnOrder, } });
+            this.props.dispatch({ type: 'setNewState', state: { ...this.props.state, columnOrder: newColumnOrder, } });
             return;
         }
 
@@ -89,7 +89,7 @@ export default class Board extends React.PureComponent {
             const newState = _.cloneDeep(this.props.state);
             newState.columns.set(newHome.id, newHome);
 
-            this.props.dispatch({ type: 'setState', state: newState });
+            this.props.dispatch({ type: 'setNewState', state: newState });
             return;
         }
 
@@ -112,7 +112,7 @@ export default class Board extends React.PureComponent {
         newState.tasks.set(draggableId, newTask);
         newState.columns.set(newHome.id, newHome);
         newState.columns.set(newForeign.id, newForeign);
-        this.props.dispatch({ type: 'setState', state: newState });
+        this.props.dispatch({ type: 'setNewState', state: newState });
     };
 
     render() {
