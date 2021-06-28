@@ -3,6 +3,8 @@ import styled from 'styled-components';
 import { Form, Divider, Label, Button, Header, Grid } from 'semantic-ui-react'
 import { Redirect } from 'react-router-dom'
 
+const bcrypt = require('bcryptjs');
+
 const Container = styled.div`
   margin-top:30vh;
 `
@@ -24,7 +26,7 @@ class SignInForm extends React.Component {
   }
 
   signIn() {
-    this.ButtonClicked = true;
+    this.state.ButtonClicked = true;
 
     bcrypt.hash(this.state.EntrPswrd, 0).then((hash) => {
       alert(hash);
@@ -62,7 +64,7 @@ class SignInForm extends React.Component {
           Sign in
         </Button>
         {this.errorDiv}
-        {this.ButtonClicked ? <Redirect to='/' /> : <Redirect to='/SignIn' />}
+        {this.state.ButtonClicked ? <Redirect to='/' /> : <Redirect to='/SignIn' />}
       </Form>
     );
   }
