@@ -18,9 +18,8 @@ class SignUpForm extends React.Component {
       Username: "",
       EntrPswrd: "",
       CnfrmPswrd: "",
-
-      SamePswrd: false,
       ButtonClicked: false,
+      SamePswrd: false,
     }
 
     this.handleChangeUsername = this.handleChangeUsername.bind(this);
@@ -52,8 +51,8 @@ class SignUpForm extends React.Component {
   }
 
   signUp() {
-    this.state.ButtonClicked = true;
     if (this.errorDivHandle()) {
+      this.state.ButtonClicked = true;
       bcrypt.hash(this.state.EntrPswrd, 0).then((hash) => {
         alert(hash);
       });
@@ -106,7 +105,7 @@ class SignUpForm extends React.Component {
         </Button><br />
         Already have an account? <Link to='./signIn'>Sign in</Link>
         {this.errorDiv}
-        {this.state.ButtonClicked ? <Redirect to='/' /> : <Redirect to='/SignUp' />}
+        {this.state.ButtonClicked ? <Redirect to='/board' /> : <div />}
       </Form>
     );
   }

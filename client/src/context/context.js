@@ -12,6 +12,7 @@ class User {
 export default class Session {
     constructor() {
         this.socket = io();
+        this.isLoggedIn = false;
         this.user = new User();
     }
 }

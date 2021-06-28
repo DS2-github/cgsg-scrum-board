@@ -64,7 +64,7 @@ class SignInForm extends React.Component {
           Sign in
         </Button>
         {this.errorDiv}
-        {this.state.ButtonClicked ? <Redirect to='/' /> : <Redirect to='/SignIn' />}
+        {this.state.ButtonClicked ? <Redirect to='/board' /> : <div />}
       </Form>
     );
   }

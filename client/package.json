@@ -4,6 +4,7 @@
   "private": true,
   "dependencies": {
     "@atlaskit/css-reset": "^2.0.0",
+    "bcryptjs": "^2.4.3",
     "express": "^4.17.1",
     "lodash": "^4.17.21",
     "mdb-react-ui-kit": "^1.0.0-beta7",
