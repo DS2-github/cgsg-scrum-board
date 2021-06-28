@@ -1,6 +1,7 @@
 import React, { useContext } from 'react';
 import styled from 'styled-components';
 import { Form, Divider, Label, Button, Header, Grid } from 'semantic-ui-react'
+import { Redirect } from 'react-router-dom'
 
 const Container = styled.div`
   margin-top:30vh;
@@ -13,6 +14,8 @@ class SignInForm extends React.Component {
     this.state = {
       Username: "",
       EntrPswrd: "",
+
+      ButtonClicked: false,
     }
 
     this.handleChangeUsername = this.handleChangeUsername.bind(this);
@@ -21,6 +24,7 @@ class SignInForm extends React.Component {
   }
 
   signIn() {
+    this.ButtonClicked = true;
     /*
      * TODO: passwords hashing, database ... 
      */
@@ -53,6 +57,7 @@ class SignInForm extends React.Component {
           Sign in
         </Button>
         {this.errorDiv}
+        {this.ButtonClicked ? <Redirect to='/' /> : <Redirect to='/SignIn' />}
       </Form>
     );
   }

@@ -1,5 +1,6 @@
-import React, { Component } from 'react';
-import { BrowserRouter as Router, Switch, Route } from 'react-router-dom'
+import React, { Component, useContext, useEffect } from 'react';
+import { Redirect, BrowserRouter as Router, Switch, Route } from 'react-router-dom'
+import { Context } from './index'
 
 import mainPage from './pages/main/main-page'
 import SignIn from './pages/sign-in-up/sign-in'
@@ -11,20 +12,22 @@ const routes = [
     { path: '/signIn', Component: SignIn },
 ]
 
-class App extends Component {
-    render() {
-        return (
-            <Router>
-                <Switch>
-                    {routes.map(({ path, Component }) => (
-                        <Route key={path} path={path} exact>
-                            <Component />
-                        </Route>
-                    ))}
-                </Switch>
-            </Router>
-        );
-    }
+function App(props) {
+    const session = useContext(Context);
+
+    return (
+        <Router>
+            {session.isLoggedIn ? <Redirect to='/' /> : <Redirect to='/signUp' />}
+            <Switch>
+                {routes.map(({ path, Component }) => (
+                    <Route key={path} path={path} exact>
+                        <Component />
+                    </Route>
+                ))}
+            </Switch>
+        </Router>
+    );
+
 }
 
 export default App;

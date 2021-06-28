@@ -1,6 +1,8 @@
 import React, { useContext } from 'react';
 import styled from 'styled-components';
 import { Form, Divider, Label, Button, Header, Grid } from 'semantic-ui-react'
+import { Link, Redirect } from 'react-router-dom'
+import { Context } from '../../index';
 //import bcrypt from 'bcrypt'
 
 //const bcrypt = require('bcrypt');
@@ -20,6 +22,7 @@ class SignUpForm extends React.Component {
       CnfrmPswrd: "",
 
       SamePswrd: false,
+      ButtonClicked: false,
     }
 
     this.handleChangeUsername = this.handleChangeUsername.bind(this);
@@ -52,10 +55,7 @@ class SignUpForm extends React.Component {
 
   signUp() {
     if (this.errorDivHandle()) {
-      /*bcrypt.genSalt(saltRounds)
-        .then(salt => {
-          console.log(salt);
-        });
+      this.ButtonClicked = true;
       /*
        * TODO: passwords hashing, database ... 
        */
@@ -74,7 +74,7 @@ class SignUpForm extends React.Component {
 
   handleChangeCnfrm(event) {
     this.setState({ CnfrmPswrd: event.target.value });
-    if (event.target.value === this.state.EntrPswrd)
+    if (event.target.value == this.state.EntrPswrd)
       this.setState({ SamePswrd: true });
     else
       this.setState({ SamePswrd: false });
@@ -100,14 +100,36 @@ class SignUpForm extends React.Component {
         </Form.Field>
         <Button onClick={this.signUp}>
           Sign up
-        </Button>
+        </Button><br />
+        Already have an account? <Link to='./signIn'>Sign in</Link>
         {this.errorDiv}
+        {this.ButtonClicked ? <Redirect to='/' /> : <Redirect to='/SignUp' />}
       </Form>
     );
   }
 }
 
 function SignUp(props) {
+
+  //const session = useContext(Context);
+
+
+  //const [state, dispatch] = useReducer(boardReducer, initialState);
+
+  // const getCard = useCallback(({colId, content}) => {
+  //   session.socket.emit("getData");
+  // });
+
+  // let useEffect = ((data) => {
+  //   data = user;
+  //   session.socket.on("addUser", data => {
+  //     console.log(data);
+  //   })
+  // })
+  // useEffect();
+
+
+
   return (
     <Container>
       <Grid>
