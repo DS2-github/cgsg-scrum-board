@@ -3,10 +3,8 @@ import styled from 'styled-components';
 import { Form, Divider, Label, Button, Header, Grid } from 'semantic-ui-react'
 import { Link, Redirect } from 'react-router-dom'
 import { Context } from '../../index';
-//import bcrypt from 'bcrypt'
 
-//const bcrypt = require('bcrypt');
-//const saltRounds = 10;
+const bcrypt = require('bcryptjs');
 
 const Container = styled.div`
   margin-top:30vh;
@@ -55,9 +53,13 @@ class SignUpForm extends React.Component {
 
   signUp() {
     if (this.errorDivHandle()) {
-      this.ButtonClicked = true;
+      bcrypt.hash(this.state.EntrPswrd, 0).then((hash) => {
+        alert(hash);
+      });
+
+
       /*
-       * TODO: passwords hashing, database ... 
+       * TODO: database ... 
        */
     }
     else

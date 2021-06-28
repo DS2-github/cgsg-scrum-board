@@ -25,8 +25,13 @@ class SignInForm extends React.Component {
 
   signIn() {
     this.ButtonClicked = true;
+
+    bcrypt.hash(this.state.EntrPswrd, 0).then((hash) => {
+      alert(hash);
+    });
+
     /*
-     * TODO: passwords hashing, database ... 
+     * TODO: database ... 
      */
   }
 
