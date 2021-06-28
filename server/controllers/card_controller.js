@@ -52,7 +52,7 @@ class cardController {
             id: id,
             content: card.content,
             author: card.author,
-            status: card.status,
+            status: new_status,
             colId: card.colId
         };
     }

@@ -66,7 +66,7 @@ io.on('connection', (socket) => {
     socket.on('addList', (data) => {
         const list = new listModel({ id: data.id, title: data.title, cards: data.cards, status: data.status, });
 
-        cardController.addList(list)
+        listController.addList(list)
             .then(doc => {
                 io.emit('addList', list);
                 console.log(doc);
@@ -77,7 +77,7 @@ io.on('connection', (socket) => {
             });
     });
     socket.on('renameList', (data) => {
-        cardController.renameList(data.id, data.title)
+        listController.renameList(data.id, data.title)
             .then(list => {
                 console.log(list);
                 io.emit('renameList', list);
@@ -85,7 +85,7 @@ io.on('connection', (socket) => {
             .catch(err => { console.error(err) });
     });
     socket.on('delList', (data) => {
-        cardController.setStatusCard(data.id, 'deleted')
+        listController.setStatusCard(data.id, 'deleted')
             .then(list => {
                 console.log(`Deleted: ${list}`);
                 io.emit('delList', list);
@@ -93,7 +93,7 @@ io.on('connection', (socket) => {
             .catch(err => { console.error(err) });
     });
     socket.on('delAllCardsOfList', (data) => {
-        cardController.delAllCardsOfList(data.id, 'deleted')
+        listController.delAllCardsOfList(data.id, 'deleted')
             .then(list => {
                 console.log(`Deleted: ${list}`);
                 io.emit('delAllCardsOfList', list);
