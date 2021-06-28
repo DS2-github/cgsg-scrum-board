@@ -1,7 +1,8 @@
-import React, { useReducer } from 'react';
+import React, { useReducer, useContext } from 'react';
 import { Modal, Button, Icon, Input } from 'semantic-ui-react'
 import { ContextMenu, MenuItem } from "react-contextmenu";
 import "./contextmenu.css"
+import { Context } from '../../../index';
 
 function editReducer(state, action) {
   switch (action.type) {
@@ -57,7 +58,7 @@ function EditTask(props) {
         <Button color='green' inverted onClick={() => {
           props.task.author !== "tester" ?
             alert("Access denied!") :
-            props.dispatch({ type: 'editTask', taskId: props.task.id, content: value }); disp({ type: 'close', value: value })
+            props.dispatch({ type: 'editTask', taskId: props.task.id, content: value, socket: props.socket }); disp({ type: 'close', value: value })
         }}>
           <Icon name='checkmark' /> Confirm
         </Button>
@@ -66,24 +67,24 @@ function EditTask(props) {
   );
 }
 
-export default class ContextMenuAdd extends React.Component {
+export default function ContextMenuAdd(props) {
+  const session = useContext(Context);
 
-  render() {
-    return (
-      <ContextMenu id={this.props.task.id}>
-        <EditTask trigger={
-          <MenuItem><Icon name="edit" />Edit</MenuItem>
-        }
-          task={this.props.task}
-          dispatch={this.props.dispatch}
-        />
-        <MenuItem onClick={() => { this.props.dispatch({ type: 'addTask', colId: this.props.colId, content: this.props.task.content }) }}>
-          <Icon name="copy outline" color="black" />Clone
+  return (
+    <ContextMenu id={props.task.id}>
+      <EditTask trigger={
+        <MenuItem><Icon name="edit" />Edit</MenuItem>
+      }
+        task={props.task}
+        socket={session.socket}
+        dispatch={props.dispatch}
+      />
+      <MenuItem onClick={() => { props.dispatch({ type: 'addTask', colId: props.task.colId, content: props.task.content, socket: session.socket }) }}>
+        <Icon name="copy outline" color="black" />Clone
         </MenuItem>
-        <MenuItem onClick={() => { this.props.dispatch({ type: 'deleteTask', colId: this.props.colId, taskId: this.props.task.id }) }}>
-          <Icon name="trash" />Delete
+      <MenuItem onClick={() => { props.dispatch({ type: 'deleteTask', colId: props.task.colId, taskId: props.task.id, socket: session.socket }) }}>
+        <Icon name="trash" />Delete
         </MenuItem>
-      </ContextMenu>
-    );
-  }
+    </ContextMenu>
+  );
 }

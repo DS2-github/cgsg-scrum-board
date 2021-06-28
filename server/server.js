@@ -21,7 +21,7 @@ io.on('connection', (socket) => {
     cardController.restoreCards()
         .then(cards => {
             console.log(cards);
-            io.emit('restoreCards', cards);
+            socket.emit('restoreCards', cards);
         })
         .catch(err => { console.error(err) });
 
@@ -32,7 +32,7 @@ io.on('connection', (socket) => {
         socket.emit('emptyCard', emptyCard);
         cardController.addCard(card)
             .then(doc => {
-                socket.emit('addCard', card);
+                io.emit('addCard', card);
                 console.log(doc);
             })
             .catch(err => {
@@ -44,7 +44,7 @@ io.on('connection', (socket) => {
         cardController.updateCard(data.id, data.content, 'edited')
             .then(card => {
                 console.log(card);
-                socket.emit('editCard', card);
+                io.emit('editCard', card);
             })
             .catch(err => { console.error(err) });
     });
@@ -52,7 +52,7 @@ io.on('connection', (socket) => {
         cardController.updateCard(data.id, '', 'deleted')
             .then(card => {
                 console.log(`Deleted: ${card}`);
-                socket.emit('delCard', card);
+                io.emit('delCard', card);
             })
             .catch(err => { console.error(err) });
     });
