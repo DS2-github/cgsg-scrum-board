@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
-const userSchema = new Schema({
+const cardSchema = new Schema({
     id: { type: String, unique: true, required: true },
     colId: { type: String, required: true },
     content: { type: String, required: true },
@@ -9,4 +9,4 @@ const userSchema = new Schema({
     status: { type: String, default: '' },
 });
 
-module.exports = mongoose.model('Card', userSchema);
+module.exports = mongoose.model('Card', cardSchema);
