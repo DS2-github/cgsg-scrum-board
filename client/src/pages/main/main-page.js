@@ -51,15 +51,16 @@ const initialState = {
   columnOrder: ['column-0', 'column-1', 'column-2', 'column-3'],
 }
 
-
 function boardReducer(state, action) {
   switch (action.type) {
     case 'addTaskSocket': {
       let newTasks = _.cloneDeep(state.tasks);
       let newColumn = state.columns.get(action.task.colId);
+      let newTaskIds = new Set(newColumn.taskIds);
 
       newTasks.set(action.task.id, { id: action.task.id, content: action.task.content, colId: action.task.colId, author: action.task.author, status: action.task.status });
-      newColumn.taskIds.push(action.task.id);
+      newTaskIds.add(action.task.id);
+      newColumn.taskIds = Array.from(newTaskIds);
       const newState = _.cloneDeep(state);
       newState.tasks = newTasks;
       newState.columns.set(newColumn.id, newColumn);
@@ -67,10 +68,10 @@ function boardReducer(state, action) {
     }
     case 'editTaskSocket': {
       let newTasks = _.cloneDeep(state.tasks);
-      let newTask = newTasks.get(action.taskId);
-      newTask.content = _.clone(action.content);
-      newTask.status = 'edited';
-      newTasks.set(action.taskId, newTask);
+      let newTask = newTasks.get(action.task.id);
+      newTask.content = action.task.content;
+      newTask.status = action.task.status;
+      newTasks.set(action.id, newTask);
 
       const newState = _.cloneDeep(state);
       newState.tasks = newTasks;
@@ -79,9 +80,9 @@ function boardReducer(state, action) {
     }
     case 'deleteTaskSocket': {
       let newTasks = _.cloneDeep(state.tasks);
-      let newColumn = state.columns.get(action.colId);
+      let newColumn = state.columns.get(action.task.colId);
 
-      newTasks.set(action.taskId, { id: action.taskId, content: "task was deleted", colId: "", author: "scrum board system", status: "deleted" });
+      newTasks.set(action.task.id, { id: action.task.id, content: action.task.content, colId: action.task.colId, author: action.task.author, status: action.task.status });
       const newState = _.cloneDeep(state);
       newState.tasks = newTasks;
       newColumn.taskIds.splice(newColumn.taskIds.indexOf(action.taskId), 1);
@@ -121,67 +122,6 @@ function boardReducer(state, action) {
       newState.columnOrder = newColumnOrder;
       return newState;
     }
-    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    case 'addTask': {
-      action.socket.emit("addCard", { id: findFirstFreeId(state.tasks), content: action.content, colId: action.colId, author: "tester" });
-      return state;
-    }
-    case 'editTask': {
-      let newTasks = _.cloneDeep(state.tasks);
-      let newTask = newTasks.get(action.taskId);
-      newTask.content = _.clone(action.content);
-      newTask.status = 'edited';
-      newTasks.set(action.taskId, newTask);
-
-      const newState = _.cloneDeep(state);
-      newState.tasks = newTasks;
-
-      return newState;
-    }
-    case 'deleteTask': {
-      let newTasks = _.cloneDeep(state.tasks);
-      let newColumn = state.columns.get(action.colId);
-
-      newTasks.set(action.taskId, { id: action.taskId, content: "task was deleted", colId: "", author: "scrum board system", status: "deleted" });
-      const newState = _.cloneDeep(state);
-      newState.tasks = newTasks;
-      newColumn.taskIds.splice(newColumn.taskIds.indexOf(action.taskId), 1);
-      newState.columns.set(newColumn.id, newColumn);
-      return newState;
-    }
-    case 'addList': {
-      let newColumns = _.cloneDeep(state.columns);
-      let newIndOfColemn = findFirstFreeId(newColumns);
-      let newColumnOrder = _.cloneDeep(state.columnOrder);
-
-      newColumns.set(newIndOfColemn, { id: newIndOfColemn, tittle: action.tittle, taskIds: [], status: "" });
-      newColumnOrder.push(newIndOfColemn);
-      const newState = _.cloneDeep(state);
-      newState.columns = newColumns;
-      newState.columnOrder = _.clone(newColumnOrder);
-      return newState;
-    }
-    case 'renameList': {
-      let newColumns = _.cloneDeep(state.columns);
-      let newColumn = newColumns.get(action.colId);
-      newColumn.tittle = _.clone(action.tittle);
-      newColumns.set(action.colId, newColumn);
-      const newState = _.cloneDeep(state);
-      newState.columns = newColumns;
-
-      return newState;
-    }
-    case 'deleteList': {
-      let newColumns = _.cloneDeep(state.columns);
-      let newColumnOrder = _.cloneDeep(state.columnOrder);
-
-      newColumns.set(action.colId, { id: action.colId, tittle: "list was deleted", taskIds: [], status: "deleted" });
-      const newState = _.cloneDeep(state);
-      newState.columns = newColumns;
-      newColumnOrder.splice(newColumnOrder.indexOf(action.colId), 1);
-      newState.columnOrder = newColumnOrder;
-      return newState;
-    }
     case 'setState':
       return action.state;
     default:
@@ -194,9 +134,43 @@ function Main(props) {
 
   const [state, dispatch] = useReducer(boardReducer, initialState);
 
+  const boardController = (action) => {
+    switch (action.type) {
+      case 'addTask':
+        action.socket.emit("addCard", { id: findFirstFreeId(state.tasks), content: action.content, colId: action.colId, author: "tester" });
+        break;
+      case 'editTask':
+        action.socket.emit("editCard", { id: action.id, content: action.content });
+        break;
+      case 'deleteTask':
+        action.socket.emit("delCard", { id: action.id, content: action.content, colId: action.colId });
+        break;
+      case 'addList':
+        /*addList socket*/
+        break;
+      case 'renameList':
+        /*rename list socket*/
+        break;
+      case 'deleteList':
+        /*delete list socket*/
+        break;
+      case 'setState':
+        dispatch({ type: 'setState', state: action.state })
+        break;
+      default:
+        throw new Error('Unsupported action...');
+    }
+  }
+
   useEffect(() => {
-    session.socket.on("addCard", task => {
-      dispatch({ type: 'addTaskSocket', task });
+    session.socket.on("addCard", tsk => {
+      dispatch({ type: 'addTaskSocket', task: tsk });
+    });
+    session.socket.on("editCard", tsk => {
+      dispatch({ type: 'editTaskSocket', task: tsk });
+    });
+    session.socket.on("delCard", tsk => {
+      dispatch({ type: 'deleteTaskSocket', task: tsk });
     });
     session.socket.on("restoreCards", cards => {
       let newTasks = _.cloneDeep(state.tasks);
@@ -218,10 +192,11 @@ function Main(props) {
     <div>
       <TopMenu />
       <Container>
-        <Board state={state} dispatch={dispatch} />
+        <Board state={state} dispatch={boardController} />
       </Container>
     </div>
   );
 }
+
 
 export default Main;

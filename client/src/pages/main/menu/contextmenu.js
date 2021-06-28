@@ -58,7 +58,7 @@ function EditTask(props) {
         <Button color='green' inverted onClick={() => {
           props.task.author !== "tester" ?
             alert("Access denied!") :
-            props.dispatch({ type: 'editTask', taskId: props.task.id, content: value, socket: props.socket }); disp({ type: 'close', value: value })
+            props.dispatch({ type: 'editTask', id: props.task.id, content: value, socket: props.socket }); disp({ type: 'close', value: value })
         }}>
           <Icon name='checkmark' /> Confirm
         </Button>
@@ -82,7 +82,7 @@ export default function ContextMenuAdd(props) {
       <MenuItem onClick={() => { props.dispatch({ type: 'addTask', colId: props.task.colId, content: props.task.content, socket: session.socket }) }}>
         <Icon name="copy outline" color="black" />Clone
         </MenuItem>
-      <MenuItem onClick={() => { props.dispatch({ type: 'deleteTask', colId: props.task.colId, taskId: props.task.id, socket: session.socket }) }}>
+      <MenuItem onClick={() => { props.dispatch({ type: 'deleteTask', colId: props.task.colId, id: props.task.id, content: props.task.content, socket: session.socket }) }}>
         <Icon name="trash" />Delete
         </MenuItem>
     </ContextMenu>
